@@ -37,4 +37,7 @@ export const planet = () => {
     Mercury, Venus, Earth, Jupiter, Saturn
   }
 }
+export default {
+
+}
 </script>
