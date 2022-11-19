@@ -1,24 +1,22 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import MyCanvas from "./MyCanvas.vue";
-import { format } from "date-fns";
+import { format, getTime } from "date-fns";
 
 defineProps({
   msg: String,
 });
 
-const radius = ref(50);
-const count = ref(0);
-
-const currentDatetime = ref("");
+const currentDatetime = ref('');
 
 const getCurrentDatetime = () => {
   currentDatetime.value = format(new Date(), "yyyy/MM/dd HH:mm:ss");
+  // currentDatetime.value = getTime(new Date());
 };
 
 onMounted(() => {
   getCurrentDatetime();
-  setInterval(getCurrentDatetime, 1000);
+  setInterval(getCurrentDatetime, 100);
 });
 </script>
 

@@ -47,18 +47,18 @@ const drawSolarSystem = () => {
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
 
   // 背景
-  drawBackGround(canvasScale.value);
+  drawFilledCircle(canvasScale.value);
 
   // 天王星
   drawPlanetaryOrbit(Uranus);
   drawPlanetaryArcArea(Uranus, monthCount.value, 1);
   drawPlanet(Uranus, monthCount.value);
-  drawBackGround(Uranus.radius - 10); // デザイン調整
+  drawFilledCircle(Uranus.radius - 10); // デザイン調整
   // 土星
   drawPlanetaryOrbit(Saturn);
   drawPlanetaryArcArea(Saturn, monthCount.value, 1);
   drawPlanet(Saturn, monthCount.value);
-  drawBackGround(Saturn.radius - 10); // デザイン調整
+  drawFilledCircle(Saturn.radius - 10); // デザイン調整
   // 木星
   drawPlanetaryOrbit(Jupiter);
   drawPlanetaryArcArea(Jupiter, monthCount.value, 1);
@@ -93,7 +93,14 @@ const drawSolarSystem = () => {
 
 // 背景
 const drawBackGround = (radius: number) => {
-  drawFilledCircle(radius, "black");
+  drawFilledCircle(radius, "black", Math.PI * 0 / 4, Math.PI * 1 / 4);
+  drawFilledCircle(radius, "rgb(30,30,30)", Math.PI * 1 / 4, Math.PI * 2 / 4);
+  drawFilledCircle(radius, "black", Math.PI * 2 / 4, Math.PI * 3 / 4);
+  drawFilledCircle(radius, "rgb(30,30,30)", Math.PI * 3 / 4, Math.PI * 4 / 4);
+  drawFilledCircle(radius, "black", Math.PI * 4 / 4, Math.PI * 5 / 4);
+  drawFilledCircle(radius, "rgb(30,30,30)", Math.PI * 5 / 4, Math.PI * 6 / 4);
+  drawFilledCircle(radius, "black", Math.PI * 6 / 4, Math.PI * 7 / 4);
+  drawFilledCircle(radius, "rgb(30,30,30)", Math.PI * 7 / 4, Math.PI * 8 / 4);
 };
 
 // 恒星を描画
@@ -137,19 +144,26 @@ const getXYByRadians = (radians: number, radius: number): Coordinate => {
 };
 
 // 丸塗り潰し
-const drawFilledCircle = (radius: number, fillColor: string = "black") => {
+const drawFilledCircle = (
+  radius: number,
+  fillColor: string = "black",
+  startAngle: number = 0,
+  endAngle: number = Math.PI * 2
+) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
+  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
   ctx.value.arc(
     centerCoordinate.value.x,
     centerCoordinate.value.y,
     radius,
-    0,
-    Math.PI * 2
+    startAngle,
+    endAngle
   );
   ctx.value.fillStyle = fillColor;
   ctx.value.fill();
 };
+
 // 惑星軌道を描画
 const drawPlanetaryOrbit = (
   planet: Planet,
