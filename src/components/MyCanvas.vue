@@ -23,9 +23,13 @@ const { Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, TheMoon } =
 // 時刻
 const monthCount = ref(0);
 const incrementMonth = () => {
-  monthCount.value++;
+  if (beatSpeed.value <= 10 && beatSpeed.value >= 0) {
+    monthCount.value += Number(beatSpeed.value);
+  }
 };
-const timeScale = ref(1 / 360);
+const timeScale = ref(1 / 3600);
+// スピード
+const beatSpeed = ref(5);
 
 onMounted(() => {
   // canvas要素を取得
@@ -298,9 +302,32 @@ const drawMoonArcArea = (
 .canvas {
   border: 1px solid #000;
 }
+
+.input-range[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #c7c7c7;
+  background: #c7c7c7;
+  border-color: #c7c7c7;
+  color: transparent;
+  height: 2px;
+  width: 100%;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  background: #c7c7c7;
+  cursor: ew-resize;
+  box-shadow: 0 0 2px 0 #555;
+  transition: .3s ease-in-out;
+}
 </style>
 
 <template>
   <canvas :width="canvasScale * 2" :height="canvasScale * 2" class="canvas" id="canvas">
   </canvas>
+  <input type="range" v-model="beatSpeed" min="0" max="10" class="input-range">
 </template>
