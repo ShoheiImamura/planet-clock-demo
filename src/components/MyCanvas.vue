@@ -97,14 +97,11 @@ const drawSolarSystem = () => {
 
 // 背景
 const drawBackGround = (radius: number) => {
-  drawFilledCircle(radius, "black", Math.PI * 0 / 4, Math.PI * 1 / 4);
-  drawFilledCircle(radius, "rgb(30,30,30)", Math.PI * 1 / 4, Math.PI * 2 / 4);
-  drawFilledCircle(radius, "black", Math.PI * 2 / 4, Math.PI * 3 / 4);
-  drawFilledCircle(radius, "rgb(30,30,30)", Math.PI * 3 / 4, Math.PI * 4 / 4);
-  drawFilledCircle(radius, "black", Math.PI * 4 / 4, Math.PI * 5 / 4);
-  drawFilledCircle(radius, "rgb(30,30,30)", Math.PI * 5 / 4, Math.PI * 6 / 4);
-  drawFilledCircle(radius, "black", Math.PI * 6 / 4, Math.PI * 7 / 4);
-  drawFilledCircle(radius, "rgb(30,30,30)", Math.PI * 7 / 4, Math.PI * 8 / 4);
+  const forCount = 12
+  for (let index = 0; index < forCount; index++) {
+    drawFilledCircle(radius, "black", Math.PI * (index * 2 + 0) / forCount, Math.PI * (index * 2 + 1) / forCount);
+    drawFilledCircle(radius, "rgb(15,15,15)", Math.PI * (index * 2 + 1) / forCount, Math.PI * (index * 2 + 2) / forCount);
+  }
 };
 
 // 恒星を描画
