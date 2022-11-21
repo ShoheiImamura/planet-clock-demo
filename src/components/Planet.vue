@@ -11,6 +11,23 @@ export type Moon = {
   angularVelocity: number;
 };
 
+export const planetaryConjunction = () => {
+  // 内合
+  const innerConjunction = (planetList: [Planet],) => {
+
+  }
+  // 外合
+  const outerConjunction = (planetList: [Planet],) => {
+
+  }
+
+  return {
+    innerConjunction,
+    outerConjunction,
+  }
+
+}
+
 export const planet = () => {
   // 水星
   const Mercury: Planet = {

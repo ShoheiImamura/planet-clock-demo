@@ -3,6 +3,7 @@
 import { ref, onMounted, watch } from "vue";
 import { planet } from "./Planet.vue";
 import type { Planet, Moon } from "./Planet.vue";
+import PlanetClock from "./PlanetClock.vue";
 
 type Coordinate = {
   x: number;
@@ -37,7 +38,7 @@ onMounted(() => {
   ctx.value = canvas.getContext("2d");
   if (ctx.value === null) return;
   drawSolarSystem();
-  setInterval(incrementMonth, 50); // todo 例示のために表示 後で消す
+  setInterval(incrementMonth, 50); //
 });
 
 watch(monthCount, () => {
@@ -55,35 +56,31 @@ const drawSolarSystem = () => {
 
   // 天王星
   drawPlanetaryOrbit(Uranus);
-  drawPlanetaryArcArea(Uranus, monthCount.value, 1);
-  drawPlanet(Uranus, monthCount.value);
-  drawFilledCircle(Uranus.radius - 10); // デザイン調整
+  drawLineStarToPlanet(Uranus, monthCount.value);
+  drawPlanet(Uranus, monthCount.value, 4);
   // 土星
   drawPlanetaryOrbit(Saturn);
-  drawPlanetaryArcArea(Saturn, monthCount.value, 1);
-  drawPlanet(Saturn, monthCount.value);
-  drawFilledCircle(Saturn.radius - 10); // デザイン調整
+  drawLineStarToPlanet(Saturn, monthCount.value);
+  drawPlanet(Saturn, monthCount.value, 5);
   // 木星
   drawPlanetaryOrbit(Jupiter);
-  drawPlanetaryArcArea(Jupiter, monthCount.value, 1);
-  drawPlanet(Jupiter, monthCount.value);
-  drawBackGround(Jupiter.radius - 18); // デザイン調整
+  drawLineStarToPlanet(Jupiter, monthCount.value);
+  drawPlanet(Jupiter, monthCount.value, 6);
   // 火星
   drawPlanetaryOrbit(Mars);
-  drawPlanetaryArcArea(Mars, monthCount.value, 1 / 12);
-  drawPlanet(Mars, monthCount.value);
+  drawLineStarToPlanet(Mars, monthCount.value);
+  drawPlanet(Mars, monthCount.value, 5);
   // 地球
   drawPlanetaryOrbit(Earth);
-  drawPlanetaryArcArea(Earth, monthCount.value, 1 / 12);
-  drawPlanet(Earth, monthCount.value);
+  drawLineStarToPlanet(Earth, monthCount.value);
+  drawPlanet(Earth, monthCount.value, 4);
   // 金星
   drawPlanetaryOrbit(Venus);
-  drawPlanetaryArcArea(Venus, monthCount.value, 1 / 12);
+  drawLineStarToPlanet(Venus, monthCount.value);
   drawPlanet(Venus, monthCount.value);
-
   // 水星
   drawPlanetaryOrbit(Mercury);
-  drawPlanetaryArcArea(Mercury, monthCount.value, 1 / 12);
+  drawLineStarToPlanet(Mercury, monthCount.value);
   drawPlanet(Mercury, monthCount.value);
 
   // 太陽（恒星）
@@ -106,14 +103,15 @@ const drawBackGround = (radius: number) => {
 
 // 恒星を描画
 const drawStar = (radius: number) => {
-  drawFilledCircle(radius, "rgb(90,20,30)"); // 太陽の色
+  drawFilledCircle(radius, "rgba(255,255,200,0.9)"); // 太陽の色
 };
 
 // 惑星を描画
 const drawPlanet = (
   planet: Planet,
   time: number = 0,
-  fillColor: string = "rgba(255,255,200,0.9)"
+  planetRadius: number = 3,
+  fillColor: string = "rgba(255,255,200,0.9)",
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
@@ -125,7 +123,7 @@ const drawPlanet = (
   ctx.value.arc(
     centerCoordinate.value.x + x,
     centerCoordinate.value.y + y,
-    3,
+    planetRadius,
     0,
     Math.PI * 2
   );
@@ -205,6 +203,28 @@ const drawPlanetaryArcArea = (
   ctx.value.closePath();
   ctx.value.fill();
 };
+// 恒星から惑星へのライン
+const drawLineStarToPlanet = (
+  planet: Planet,
+  time: number = 0, // 開始角度
+  lineColor: string = "rgba(255,255,255, 0.5)" // 扇形の色
+) => {
+  if (ctx.value === null) return;
+  ctx.value.beginPath();
+  ctx.value.strokeStyle = lineColor;
+
+  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
+  ctx.value.arc(
+    centerCoordinate.value.x,
+    centerCoordinate.value.y,
+    planet.radius,
+    planet.angularVelocity * time * -1 * timeScale.value,
+    planet.angularVelocity * (time * -1 * timeScale.value)
+  );
+  ctx.value.stroke();
+  ctx.value.closePath();
+
+}
 
 // 衛星軌道
 const drawMoonOrbit = (
