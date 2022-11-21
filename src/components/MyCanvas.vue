@@ -55,6 +55,7 @@ const drawSolarSystem = () => {
   drawFilledCircle(canvasScale.value);
 
   // 天王星
+  drawBackGround(Uranus.radius);
   drawPlanetaryOrbit(Uranus);
   drawLineStarToPlanet(Uranus, monthCount.value);
   drawPlanet(Uranus, monthCount.value, 4);
@@ -94,10 +95,10 @@ const drawSolarSystem = () => {
 
 // 背景
 const drawBackGround = (radius: number) => {
-  const forCount = 12
+  const forCount = 6
   for (let index = 0; index < forCount; index++) {
     drawFilledCircle(radius, "black", Math.PI * (index * 2 + 0) / forCount, Math.PI * (index * 2 + 1) / forCount);
-    drawFilledCircle(radius, "rgb(15,15,15)", Math.PI * (index * 2 + 1) / forCount, Math.PI * (index * 2 + 2) / forCount);
+    drawFilledCircle(radius, "rgb(25,25,25)", Math.PI * (index * 2 + 1) / forCount, Math.PI * (index * 2 + 2) / forCount);
   }
 };
 
