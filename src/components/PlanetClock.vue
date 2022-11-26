@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from "vue";
 import SolarSystemCanvas from "./SolarSystemCanvas.vue";
 import MoonSyzygyCanvas from "./MoonSyzygyCanvas.vue";
-import { format, addDays, set, differenceInDays, getYear, getMonth, getDate } from "date-fns";
+import { format, addDays, differenceInDays, getYear, getMonth, getDate } from "date-fns";
 
 defineProps({
   msg: String,
@@ -98,7 +98,7 @@ const model = ref(null)
         </v-btn-toggle>
       </v-row>
       <v-row no-gutters>
-        <v-carousel v-model="model" class="pa-4" :show-arrows="false" :hide-delimiters="true">
+        <v-carousel v-model="model" class="pa-4" :show-arrows="false" :hide-delimiters="true" :height="420">
           <v-carousel-item>
             <v-card class="ma-4" flat>
               <div class="fill-height align-center justify-center">
