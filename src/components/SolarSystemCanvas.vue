@@ -42,7 +42,7 @@ onMounted(() => {
 
 /** 日数から年数への変換 */
 const dayToYear = (day: number): number => {
-  return day / 365;
+  return day / 365.25;
 }
 
 // 位置を導出

@@ -19,7 +19,7 @@ type Coordinate = {
   y: number;
 };
 const ctx = ref<CanvasRenderingContext2D | null>(null);
-const canvasScale = ref(100);
+const canvasScale = ref(50);
 const centerCoordinate = ref<Coordinate>({
   x: canvasScale.value,
   y: canvasScale.value,
@@ -27,7 +27,7 @@ const centerCoordinate = ref<Coordinate>({
 
 /** 日数から年数への変換 */
 const dayToYear = (day: number): number => {
-  return day / 365;
+  return day / 365.25;
 }
 
 onMounted(() => {
@@ -46,7 +46,7 @@ onMounted(() => {
 const drawMoon = () => {
   const moon = TheMoon;
   const year = dayToYear(props.dayCount);
-  const radius = 50;
+  const radius = 30;
   const angle = moon.angle(year) - moon.planet.angle(year)
 
   drawCircle(radius);
@@ -141,6 +141,6 @@ const drawEllipse = (
 
 <template>
   <div>
-    <canvas width="200" height="200" class="canvas" id="moon-syzygy-canvas"> </canvas>
+    <canvas width="100" height="100" class="canvas" id="moon-syzygy-canvas"> </canvas>
   </div>
 </template>

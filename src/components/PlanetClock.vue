@@ -10,8 +10,8 @@ defineProps({
 
 const mode = ref('auto_increment'); // auto_increment, manual
 const calendarYear = ref(1900);
-const calendarMonth = ref(0);
-const calendarDay = ref(1);
+const calendarMonth = ref(2);
+const calendarDay = ref(21);
 const displayCalendar = () => {
   return new Date(calendarYear.value, calendarMonth.value, calendarDay.value);
 }
@@ -20,7 +20,7 @@ const displayCountedDate = () => {
   return format(countedDate(), "yyyy/MM/dd");
 }
 
-const baseDate = new Date(1900, 0, 1); // 基準日
+const baseDate = new Date(1900, 2, 21); // 基準日
 const dayCount = ref(0); // 基準日からの経過日数
 
 
