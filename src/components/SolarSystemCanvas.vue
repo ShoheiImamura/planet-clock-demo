@@ -283,12 +283,12 @@ const drawMoon = (
 </script>
 
 <style scoped>
-.canvas {
-  border: 1px solid #000;
-}
+
 </style>
 
 <template>
-  <canvas :width="canvasScale * 2" :height="canvasScale * 2" class="canvas" id="canvas">
-  </canvas>
+  <div class="d-flex justify-center">
+    <canvas :width="canvasScale * 2" :height="canvasScale * 2" class="canvas" id="canvas">
+    </canvas>
+  </div>
 </template>

@@ -8,7 +8,7 @@ defineProps({
   msg: String,
 });
 
-const mode = ref('auto_increment'); // auto_increment, manual
+const mode = ref('auto_increment'); // now, auto_increment, manual
 const calendarYear = ref(1900);
 const calendarMonth = ref(2);
 const calendarDay = ref(21);
@@ -59,13 +59,34 @@ const changeManualMode = () => {
 
 <template>
   <div class="">
+    <v-card>
+      <v-row class="mt-2 d-flex justify-center">
+        <v-btn-toggle v-model="mode" dark text>
+          <v-btn value="now">
+            現在
+          </v-btn>
+          <v-btn value="auto_increment">
+            早送り
+          </v-btn>
+          <v-btn value="manual">
+            操作
+          </v-btn>
+        </v-btn-toggle>
+      </v-row>
+      <v-row no-gutters>
+        <v-col cols="12" sm="8">
+          <SolarSystemCanvas :day-count="dayCount" class="ma-2 pa-2" />
+          <h2 class="text-center">{{ displayCountedDate() }}</h2>
+        </v-col>
+        <v-col cols="12" sm="4">
+          <MoonSyzygyCanvas :day-count="dayCount" class="ma-2 pa-2" />
+        </v-col>
+      </v-row>
+    </v-card>
     <div>
-      <SolarSystemCanvas :day-count="dayCount" />
-      <MoonSyzygyCanvas :day-count="dayCount" />
     </div>
 
     <div>
-      <h1>{{ displayCountedDate() }}</h1>
       <button v-show="mode == 'manual'" @click="mode = 'auto_increment'">自動</button>
       <button v-show="mode == 'auto_increment'" @click="changeManualMode()">手動</button>
 
@@ -86,15 +107,5 @@ const changeManualMode = () => {
 </template>
 
 <style scoped>
-.read-the-docs {
-  color: #888;
-}
 
-h1 {
-  color: beige;
-}
-
-button {
-  color: grey;
-}
 </style>
