@@ -33,10 +33,9 @@ onMounted(() => {
   // canvas要素を取得
   const canvas = document.getElementById("moon-syzygy-canvas") as HTMLCanvasElement;
   ctx.value = canvas.getContext("2d");
-  console.log('on mounted')
+
   if (ctx.value === null) return;
-  console.log('crx value is not null')
-  console.log(ctx.value)
+
   drawMoon();
   setInterval(drawMoon, 10);
 });
