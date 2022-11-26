@@ -1,41 +1,78 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import MyCanvas from "./MyCanvas.vue";
-import { format, addDays } from "date-fns";
+import { format, addDays, set, differenceInDays, getYear, getMonth, getDate } from "date-fns";
 
 defineProps({
   msg: String,
 });
 
-const currentDatetime = ref('');
+const mode = ref('auto_increment'); // auto_increment, manual
+const calendarYear = ref(1900);
+const calendarMonth = ref(0);
+const calendarDay = ref(1);
+const displayCalendar = () => {
+  return new Date(calendarYear.value, calendarMonth.value, calendarDay.value);
+}
 
-const getCurrentDatetime = () => {
-  currentDatetime.value = format(new Date(), "yyyy/MM/dd HH:mm:ss");
-};
 const displayCountedDate = () => {
   return format(countedDate(), "yyyy/MM/dd");
 }
-// 時刻
-const dayCount = ref(0);
+
+const baseDate = new Date(1900, 0, 1); // 基準日
+const dayCount = ref(0); // 基準日からの経過日数
+
+
+const countedDate = () => { return addDays(baseDate, dayCount.value) };
+const beatSpeed = ref(100); // 1秒間のカウント数の逆数
+
 const incrementHour = () => {
-  dayCount.value += 1 / 24;
+  if (mode.value === 'auto_increment') {
+    dayCount.value += 1 / 24;
+  }
 }
-const countedDate = () => { return addDays(new Date(1900, 0, 1), dayCount.value) };
-// スピード
-const beatSpeed = ref(100);
 onMounted(() => {
-  getCurrentDatetime();
-  setInterval(getCurrentDatetime, 100);
-  setInterval(incrementHour, 1000 / beatSpeed.value);
+  setInterval(incrementHour, 1000 / beatSpeed.value); // 1時間(1/24日)づつカウント
 });
+
+// 基準日と表示カレンダーのunixタイムを比較する
+const calendarDayFromBaseDate = () => {
+  return differenceInDays(displayCalendar(), baseDate);
+}
+
+watch(displayCalendar, () => {
+  if (mode.value == 'manual') {
+    dayCount.value = calendarDayFromBaseDate();
+  }
+})
+
+const changeManualMode = () => {
+  const countedDateTemp = countedDate();
+  calendarYear.value = getYear(countedDateTemp)
+  calendarMonth.value = getMonth(countedDateTemp)
+  calendarDay.value = getDate(countedDateTemp)
+  mode.value = 'manual';
+}
+
 </script>
 
 <template>
   <div class="">
-    <div class="">
-      <MyCanvas :day-count="dayCount" />
-      <h1>{{ displayCountedDate() }}</h1>
-    </div>
+    <MyCanvas :day-count="dayCount" />
+    <h1>{{ displayCountedDate() }}</h1>
+    <button v-show="mode == 'manual'" @click="mode = 'auto_increment'">自動</button>
+    <button v-show="mode == 'auto_increment'" @click="changeManualMode()">手動</button>
+    <li v-show="mode == 'manual'">
+      <ul>
+        <input type="range" name="year" min="1900" max="2100" v-model="calendarYear">
+      </ul>
+      <ul>
+        <input type="range" name="year" min="0" max="11" v-model="calendarMonth">
+      </ul>
+      <ul>
+        <input type="range" name="year" min="1" max="31" v-model="calendarDay">
+      </ul>
+    </li>
   </div>
 </template>
 
@@ -46,5 +83,9 @@ onMounted(() => {
 
 h1 {
   color: beige;
+}
+
+button {
+  color: grey;
 }
 </style>
