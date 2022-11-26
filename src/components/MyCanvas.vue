@@ -2,11 +2,16 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue";
 import { planet } from "./Planet.vue";
-import { Planet, Moon, planetaryConjunction } from "./Planet.vue";
+import { Planet, Moon, } from "./Planet.vue";
+import { planetaryConjunction } from "./PlanetaryConjunction.vue";
+import type { planetaryConjunctionType } from "./PlanetaryConjunction.vue";
 import PlanetClock from "./PlanetClock.vue";
 
 const props = defineProps({
-  dayCount: Number,
+  dayCount: {
+    type: Number,
+    default: 0,
+  }
 });
 
 type Coordinate = {
@@ -22,11 +27,9 @@ const centerCoordinate = ref<Coordinate>({
 });
 
 // 惑星
-const { Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, TheMoon } =
-  planet();
-
-
-const { innerConjunction, outerConjunction } = planetaryConjunction();
+const { Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, TheMoon } = planet();
+// 惑星会合
+const { isInnerConjunction, isOuterConjunction } = planetaryConjunction();
 
 onMounted(() => {
   // canvas要素を取得
@@ -37,10 +40,39 @@ onMounted(() => {
   setInterval(drawSolarSystem, 10);
 });
 
-
 /** 日数から年数への変換 */
 const dayToYear = (day: number): number => {
   return day / 365;
+}
+
+// 位置を導出
+const getXYByRadians = (radians: number, radius: number): Coordinate => {
+  const x = Math.cos(radians) * radius;
+  const y = -Math.sin(radians) * radius;
+  return {
+    x: x,
+    y: y,
+  };
+};
+const planetList = [Uranus, Saturn, Jupiter, Mars, Earth, Venus, Mercury];
+
+// 惑星会合
+const eventPlanetaryConjunction = (year: number) => {
+  const conjunctionList: planetaryConjunctionType[] = [];
+  planetList.forEach((planet1, index1) => {
+    planetList.forEach((planet2, index2) => {
+      if (index1 <= index2) {
+        return;
+      }
+      if (isInnerConjunction(planet1, planet2, year)) {
+        conjunctionList.push({ planet1: planet1, planet2: planet2, conjunctionType: 'inner' });
+      }
+      if (isOuterConjunction(planet1, planet2, year)) {
+        conjunctionList.push({ planet1: planet1, planet2: planet2, conjunctionType: 'outer' });
+      }
+    });
+  })
+  return conjunctionList;
 }
 
 const drawSolarSystem = () => {
@@ -49,37 +81,35 @@ const drawSolarSystem = () => {
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
 
   // 背景
-  drawFilledCircle(canvasScale.value);
+  drawBackGround(canvasScale.value);
 
-  // 天王星
-  drawBackGround(Uranus.radius);
-  drawPlanetaryOrbit(Uranus);
-  drawLineStarToPlanet(Uranus, props.dayCount);
-  drawPlanet(Uranus, props.dayCount, 4);
-  // 土星
-  drawPlanetaryOrbit(Saturn);
-  drawLineStarToPlanet(Saturn, props.dayCount);
-  drawPlanet(Saturn, props.dayCount, 5);
-  // 木星
-  drawPlanetaryOrbit(Jupiter);
-  drawLineStarToPlanet(Jupiter, props.dayCount);
-  drawPlanet(Jupiter, props.dayCount, 6);
-  // 火星
-  drawPlanetaryOrbit(Mars);
-  drawLineStarToPlanet(Mars, props.dayCount);
-  drawPlanet(Mars, props.dayCount, 5);
-  // 地球
-  drawPlanetaryOrbit(Earth);
-  drawLineStarToPlanet(Earth, props.dayCount);
-  drawPlanet(Earth, props.dayCount, 4);
-  // 金星
-  drawPlanetaryOrbit(Venus);
-  drawLineStarToPlanet(Venus, props.dayCount);
-  drawPlanet(Venus, props.dayCount);
-  // 水星
-  drawPlanetaryOrbit(Mercury);
-  drawLineStarToPlanet(Mercury, props.dayCount);
-  drawPlanet(Mercury, props.dayCount);
+  // 惑星
+  const planetaryConjunctionList = eventPlanetaryConjunction(dayToYear(props.dayCount))
+  if (planetaryConjunctionList.length !== 0) {
+    // 惑星会合ありの場合
+    planetList.forEach(planet => {
+      // list に planet 自身が含まれるかどうか
+      const isConjanction = planetaryConjunctionList.some((planetaryConjunction) => {
+        return planet == planetaryConjunction.planet1 || planet == planetaryConjunction.planet2
+      });
+      if (isConjanction) {
+        drawPlanetaryOrbit(planet,);
+        drawLineStarToPlanet(planet, props.dayCount, 'rgba(255,255,255,1)', 2);
+        drawPlanet(planet, props.dayCount, planet.size);
+      } else {
+        drawPlanetaryOrbit(planet,);
+        drawLineStarToPlanet(planet, props.dayCount);
+        drawPlanet(planet, props.dayCount, planet.size);
+      }
+    });
+  } else {
+    // 惑星会合なしの場合
+    planetList.forEach(planet => {
+      drawPlanetaryOrbit(planet);
+      drawLineStarToPlanet(planet, props.dayCount);
+      drawPlanet(planet, props.dayCount, planet.size);
+    });
+  }
 
   // 太陽（恒星）
   drawStar(3);
@@ -129,15 +159,6 @@ const drawPlanet = (
   ctx.value.fill();
 };
 
-// 位置を導出
-const getXYByRadians = (radians: number, radius: number): Coordinate => {
-  const x = Math.cos(radians) * radius;
-  const y = -Math.sin(radians) * radius;
-  return {
-    x: x,
-    y: y,
-  };
-};
 
 // 丸塗り潰し
 const drawFilledCircle = (
@@ -182,10 +203,12 @@ const drawPlanetaryOrbit = (
 const drawLineStarToPlanet = (
   planet: Planet,
   days: number = 0,
-  lineColor: string = "rgba(255,255,255, 0.5)" // 扇形の色
+  lineColor: string = "rgba(255,255,255, 0.5)", // 扇形の色
+  lineWidth: number = 1 // 扇形の色
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
+  ctx.value.lineWidth = lineWidth;
   ctx.value.strokeStyle = lineColor;
 
   ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
@@ -198,7 +221,6 @@ const drawLineStarToPlanet = (
   )
   ctx.value.stroke();
   ctx.value.closePath();
-
 }
 
 // 衛星軌道
@@ -267,5 +289,4 @@ const drawMoon = (
 <template>
   <canvas :width="canvasScale * 2" :height="canvasScale * 2" class="canvas" id="canvas">
   </canvas>
-
 </template>

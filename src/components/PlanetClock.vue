@@ -17,20 +17,16 @@ const displayCountedDate = () => {
 }
 // 時刻
 const dayCount = ref(0);
-const incrementDay = () => {
-  dayCount.value++;
+const incrementHour = () => {
+  dayCount.value += 1 / 24;
 }
-const countedDate = () => { return addDays(new Date(1970, 1, 1), dayCount.value) };
+const countedDate = () => { return addDays(new Date(1900, 0, 1), dayCount.value) };
 // スピード
-const beatSpeed = ref(10);
-watch(dayCount, () => {
-
-})
-
+const beatSpeed = ref(100);
 onMounted(() => {
   getCurrentDatetime();
   setInterval(getCurrentDatetime, 100);
-  setInterval(incrementDay, 1000 / beatSpeed.value);
+  setInterval(incrementHour, 1000 / beatSpeed.value);
 });
 </script>
 
