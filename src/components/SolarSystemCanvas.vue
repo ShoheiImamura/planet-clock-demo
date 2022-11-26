@@ -5,7 +5,6 @@ import { planet } from "./Planet.vue";
 import { Planet, Moon, } from "./Planet.vue";
 import { planetaryConjunction } from "./PlanetaryConjunction.vue";
 import type { planetaryConjunctionType } from "./PlanetaryConjunction.vue";
-import PlanetClock from "./PlanetClock.vue";
 
 const props = defineProps({
   dayCount: {
@@ -20,7 +19,7 @@ type Coordinate = {
 };
 
 const ctx = ref<CanvasRenderingContext2D | null>(null);
-const canvasScale = ref(200);
+const canvasScale = ref(150);
 const centerCoordinate = ref<Coordinate>({
   x: canvasScale.value,
   y: canvasScale.value,
@@ -93,13 +92,13 @@ const drawSolarSystem = () => {
         return planet == planetaryConjunction.planet1 || planet == planetaryConjunction.planet2
       });
       if (isConjanction) {
-        drawPlanetaryOrbit(planet,);
+        drawPlanetaryOrbit(planet);
         drawLineStarToPlanet(planet, props.dayCount, 'rgba(255,255,255,1)', 2);
         drawPlanet(planet, props.dayCount, planet.size);
       } else {
-        drawPlanetaryOrbit(planet,);
-        drawLineStarToPlanet(planet, props.dayCount);
-        drawPlanet(planet, props.dayCount, planet.size);
+        drawPlanetaryOrbit(planet);
+        drawLineStarToPlanet(planet, props.dayCount, 'rgba(120,120,120,0.5)',);
+        drawPlanet(planet, props.dayCount, planet.size, 'rgba(120,120,120,0.5)');
       }
     });
   } else {
@@ -121,7 +120,7 @@ const drawSolarSystem = () => {
 
 // 背景
 const drawBackGround = (radius: number) => {
-  const forCount = 12
+  const forCount = 2
   for (let index = 0; index < forCount; index++) {
     drawFilledCircle(radius, "black", Math.PI * (index * 2 + 0) / forCount, Math.PI * (index * 2 + 1) / forCount);
     drawFilledCircle(radius, "rgb(20,20,20)", Math.PI * (index * 2 + 1) / forCount, Math.PI * (index * 2 + 2) / forCount);
@@ -145,7 +144,7 @@ const drawPlanet = (
   // 位置を導出
   const { x, y } = getXYByRadians(
     planet.angle(dayToYear(days)),
-    planet.radius
+    planet.radiusRatio * canvasScale.value / 2
   );
   ctx.value.arc(
     centerCoordinate.value.x + x,
@@ -192,11 +191,12 @@ const drawPlanetaryOrbit = (
   ctx.value.arc(
     centerCoordinate.value.x,
     centerCoordinate.value.y,
-    planet.radius,
+    planet.radiusRatio * canvasScale.value / 2,
     0,
     2 * Math.PI
   );
   ctx.value.stroke();
+  ctx.value.closePath();
 };
 
 // 恒星から惑星へのライン
@@ -215,12 +215,13 @@ const drawLineStarToPlanet = (
   ctx.value.arc(
     centerCoordinate.value.x,
     centerCoordinate.value.y,
-    planet.radius,
+    planet.radiusRatio * canvasScale.value / 2,
     (-1) * planet.angle(dayToYear(days)),
     (-1) * planet.angle(dayToYear(days)),
   )
   ctx.value.stroke();
   ctx.value.closePath();
+  ctx.value.lineWidth = 1; // reset
 }
 
 // 衛星軌道
@@ -233,19 +234,20 @@ const drawMoonOrbit = (
   // 惑星の位置を導出
   const { x, y } = getXYByRadians(
     moon.planet.angle(dayToYear(days)),
-    moon.planet.radius
+    moon.planet.radiusRatio * canvasScale.value / 2
   );
   ctx.value.beginPath();
   ctx.value.strokeStyle = lineColor;
   ctx.value.arc(
     centerCoordinate.value.x + x,
     centerCoordinate.value.y + y,
-    moon.radius,
+    moon.radiusRatio * canvasScale.value / 2,
     0,
     2 * Math.PI,
     true
   );
   ctx.value.stroke();
+  ctx.value.closePath();
 };
 
 // 衛星を描画
@@ -258,13 +260,13 @@ const drawMoon = (
   // 惑星の位置を導出
   const { x: planetX, y: planetY } = getXYByRadians(
     moon.planet.angle(dayToYear(days)),
-    moon.planet.radius
+    moon.planet.radiusRatio * canvasScale.value / 2
   );
   ctx.value.beginPath();
   // 位置を導出
   const { x, y } = getXYByRadians(
     moon.angle(dayToYear(days)),
-    moon.radius
+    moon.radiusRatio * canvasScale.value / 2
   );
   ctx.value.arc(
     centerCoordinate.value.x + planetX + x,

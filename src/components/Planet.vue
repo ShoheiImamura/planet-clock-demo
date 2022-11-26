@@ -3,8 +3,8 @@
 export type Planet = {
   /** 日名 */
   japaneseName: string;
-  /** 描画上の半径 */
-  radius: number;
+  /** 描画上の半径（地球を100とした時の比率） */
+  radiusRatio: number;
   /** 描画上の大きさ（半径） */
   size: number;
   /** 公転周期 */
@@ -19,7 +19,7 @@ export type Moon = {
   /** 惑星 */
   planet: Planet;
   /** 描画上の半径 */
-  radius: number;
+  radiusRatio: number;
   /** 公転周期 */
   orbitalPeriod: number;
   /** 1年間で進む角度比 */
@@ -32,7 +32,7 @@ export type Moon = {
 export const planet = () => {
   /** 水星 */
   const Mercury: Planet = {
-    radius: 39,
+    radiusRatio: 0.39,
     japaneseName: "水星",
     size: 3,
     orbitalPeriod: 0.24,
@@ -42,7 +42,7 @@ export const planet = () => {
 
   /** 金星 */
   const Venus: Planet = {
-    radius: 72,
+    radiusRatio: 0.72,
     japaneseName: "金星",
     size: 3,
     orbitalPeriod: 0.62,
@@ -52,7 +52,7 @@ export const planet = () => {
 
   /** 地球 */
   const Earth: Planet = {
-    radius: 100,
+    radiusRatio: 1,
     japaneseName: "地球",
     size: 4,
     orbitalPeriod: 1, // 
@@ -62,7 +62,7 @@ export const planet = () => {
 
   /** 火星 */
   const Mars: Planet = {
-    radius: 152,
+    radiusRatio: 1.52,
     japaneseName: "火星",
     size: 5,
     orbitalPeriod: 1.88,
@@ -72,7 +72,7 @@ export const planet = () => {
 
   /** 木星 */
   const Jupiter: Planet = {
-    radius: 170,
+    radiusRatio: 1.70,
     japaneseName: "木星",
     size: 6,
     orbitalPeriod: 11.8,
@@ -81,7 +81,7 @@ export const planet = () => {
   };
   /** 土星 */
   const Saturn: Planet = {
-    radius: 180,
+    radiusRatio: 1.80,
     japaneseName: "土星",
     size: 5,
     orbitalPeriod: 29.4,
@@ -90,7 +90,7 @@ export const planet = () => {
   };
   /** 天王星 */
   const Uranus: Planet = {
-    radius: 190,
+    radiusRatio: 1.90,
     japaneseName: "天王星",
     size: 4,
     orbitalPeriod: 84.0,
@@ -99,7 +99,7 @@ export const planet = () => {
   };
   /** 海王星 */
   const Neptune: Planet = {
-    radius: 200,
+    radiusRatio: 2.00,
     japaneseName: "海王星",
     size: 3,
     orbitalPeriod: 164,
@@ -110,7 +110,7 @@ export const planet = () => {
   /** 月 */
   const TheMoon: Moon = {
     planet: Earth,
-    radius: 15,
+    radiusRatio: 0.15,
     orbitalPeriod: 0.075,
     angularVelocity: Math.PI * 2 * (1 / 0.075),
     angle: (year: number) => { return 0 + TheMoon.angularVelocity * year },

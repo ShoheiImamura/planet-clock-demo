@@ -59,22 +59,29 @@ const changeManualMode = () => {
 
 <template>
   <div class="">
-    <SolarSystemCanvas :day-count="dayCount" />
-    <MoonSyzygyCanvas :day-count="dayCount" />
-    <h1>{{ displayCountedDate() }}</h1>
-    <button v-show="mode == 'manual'" @click="mode = 'auto_increment'">自動</button>
-    <button v-show="mode == 'auto_increment'" @click="changeManualMode()">手動</button>
-    <li v-show="mode == 'manual'">
-      <ul>
-        <input type="range" name="year" min="1900" max="2100" v-model="calendarYear">
-      </ul>
-      <ul>
-        <input type="range" name="year" min="0" max="11" v-model="calendarMonth">
-      </ul>
-      <ul>
-        <input type="range" name="year" min="1" max="31" v-model="calendarDay">
-      </ul>
-    </li>
+    <div>
+      <SolarSystemCanvas :day-count="dayCount" />
+      <MoonSyzygyCanvas :day-count="dayCount" />
+    </div>
+
+    <div>
+      <h1>{{ displayCountedDate() }}</h1>
+      <button v-show="mode == 'manual'" @click="mode = 'auto_increment'">自動</button>
+      <button v-show="mode == 'auto_increment'" @click="changeManualMode()">手動</button>
+
+      <li v-show="mode == 'manual'">
+        <ul>
+          <input type="range" name="year" min="1900" max="2100" v-model="calendarYear">
+        </ul>
+        <ul>
+          <input type="range" name="year" min="0" max="11" v-model="calendarMonth">
+        </ul>
+        <ul>
+          <input type="range" name="year" min="1" max="31" v-model="calendarDay">
+        </ul>
+      </li>
+    </div>
+
   </div>
 </template>
 

@@ -3,7 +3,6 @@
 
 import { ref, onMounted, watch } from "vue";
 import { planet } from "./Planet.vue";
-import type { Moon, Planet } from "./Planet.vue";
 const { TheMoon } = planet();
 
 
@@ -46,7 +45,7 @@ onMounted(() => {
 const drawMoon = () => {
   const moon = TheMoon;
   const year = dayToYear(props.dayCount);
-  const radius = 30;
+  const radius = 40;
   const angle = moon.angle(year) - moon.planet.angle(year)
 
   drawCircle(radius);
@@ -135,7 +134,7 @@ const drawEllipse = (
 
 <style scoped>
 .canvas {
-  border: 1px solid #fff;
+  border: 1px solid #333;
 }
 </style>
 
