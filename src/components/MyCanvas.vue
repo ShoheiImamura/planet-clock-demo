@@ -2,8 +2,12 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue";
 import { planet } from "./Planet.vue";
-import type { Planet, Moon } from "./Planet.vue";
+import { Planet, Moon, planetaryConjunction } from "./Planet.vue";
 import PlanetClock from "./PlanetClock.vue";
+
+const props = defineProps({
+  dayCount: Number,
+});
 
 type Coordinate = {
   x: number;
@@ -21,16 +25,8 @@ const centerCoordinate = ref<Coordinate>({
 const { Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, TheMoon } =
   planet();
 
-// 時刻
-const monthCount = ref(0);
-const incrementMonth = () => {
-  if (beatSpeed.value <= 10 && beatSpeed.value >= 0) {
-    monthCount.value += Number(beatSpeed.value);
-  }
-};
-const timeScale = ref(1 / 3600);
-// スピード
-const beatSpeed = ref(5);
+
+const { innerConjunction, outerConjunction } = planetaryConjunction();
 
 onMounted(() => {
   // canvas要素を取得
@@ -38,13 +34,14 @@ onMounted(() => {
   ctx.value = canvas.getContext("2d");
   if (ctx.value === null) return;
   drawSolarSystem();
-  setInterval(incrementMonth, 50); //
+  setInterval(drawSolarSystem, 10);
 });
 
-watch(monthCount, () => {
-  // 変更が発生するごとに再描画
-  drawSolarSystem();
-});
+
+/** 日数から年数への変換 */
+const dayToYear = (day: number): number => {
+  return day / 365;
+}
 
 const drawSolarSystem = () => {
   if (ctx.value === null) return;
@@ -57,48 +54,47 @@ const drawSolarSystem = () => {
   // 天王星
   drawBackGround(Uranus.radius);
   drawPlanetaryOrbit(Uranus);
-  drawLineStarToPlanet(Uranus, monthCount.value);
-  drawPlanet(Uranus, monthCount.value, 4);
+  drawLineStarToPlanet(Uranus, props.dayCount);
+  drawPlanet(Uranus, props.dayCount, 4);
   // 土星
   drawPlanetaryOrbit(Saturn);
-  drawLineStarToPlanet(Saturn, monthCount.value);
-  drawPlanet(Saturn, monthCount.value, 5);
+  drawLineStarToPlanet(Saturn, props.dayCount);
+  drawPlanet(Saturn, props.dayCount, 5);
   // 木星
   drawPlanetaryOrbit(Jupiter);
-  drawLineStarToPlanet(Jupiter, monthCount.value);
-  drawPlanet(Jupiter, monthCount.value, 6);
+  drawLineStarToPlanet(Jupiter, props.dayCount);
+  drawPlanet(Jupiter, props.dayCount, 6);
   // 火星
   drawPlanetaryOrbit(Mars);
-  drawLineStarToPlanet(Mars, monthCount.value);
-  drawPlanet(Mars, monthCount.value, 5);
+  drawLineStarToPlanet(Mars, props.dayCount);
+  drawPlanet(Mars, props.dayCount, 5);
   // 地球
   drawPlanetaryOrbit(Earth);
-  drawLineStarToPlanet(Earth, monthCount.value);
-  drawPlanet(Earth, monthCount.value, 4);
+  drawLineStarToPlanet(Earth, props.dayCount);
+  drawPlanet(Earth, props.dayCount, 4);
   // 金星
   drawPlanetaryOrbit(Venus);
-  drawLineStarToPlanet(Venus, monthCount.value);
-  drawPlanet(Venus, monthCount.value);
+  drawLineStarToPlanet(Venus, props.dayCount);
+  drawPlanet(Venus, props.dayCount);
   // 水星
   drawPlanetaryOrbit(Mercury);
-  drawLineStarToPlanet(Mercury, monthCount.value);
-  drawPlanet(Mercury, monthCount.value);
+  drawLineStarToPlanet(Mercury, props.dayCount);
+  drawPlanet(Mercury, props.dayCount);
 
   // 太陽（恒星）
   drawStar(3);
 
   // 月（衛星）
-  drawMoonOrbit(TheMoon, monthCount.value);
-  drawMoonArcArea(TheMoon, monthCount.value, 1 / 48);
-  drawMoon(TheMoon, monthCount.value);
+  drawMoonOrbit(TheMoon, props.dayCount);
+  drawMoon(TheMoon, props.dayCount);
 };
 
 // 背景
 const drawBackGround = (radius: number) => {
-  const forCount = 6
+  const forCount = 12
   for (let index = 0; index < forCount; index++) {
     drawFilledCircle(radius, "black", Math.PI * (index * 2 + 0) / forCount, Math.PI * (index * 2 + 1) / forCount);
-    drawFilledCircle(radius, "rgb(25,25,25)", Math.PI * (index * 2 + 1) / forCount, Math.PI * (index * 2 + 2) / forCount);
+    drawFilledCircle(radius, "rgb(20,20,20)", Math.PI * (index * 2 + 1) / forCount, Math.PI * (index * 2 + 2) / forCount);
   }
 };
 
@@ -110,7 +106,7 @@ const drawStar = (radius: number) => {
 // 惑星を描画
 const drawPlanet = (
   planet: Planet,
-  time: number = 0,
+  days: number = 0, // 基準日からの日数
   planetRadius: number = 3,
   fillColor: string = "rgba(255,255,200,0.9)",
 ) => {
@@ -118,7 +114,7 @@ const drawPlanet = (
   ctx.value.beginPath();
   // 位置を導出
   const { x, y } = getXYByRadians(
-    planet.angularVelocity * time * timeScale.value,
+    planet.angle(dayToYear(days)),
     planet.radius
   );
   ctx.value.arc(
@@ -182,32 +178,10 @@ const drawPlanetaryOrbit = (
   ctx.value.stroke();
 };
 
-// 惑星円弧塗り潰し
-const drawPlanetaryArcArea = (
-  planet: Planet,
-  time: number = 0, // 開始角度
-  period: number = 1, // 角度
-  fillColor: string = "rgba(255,255,255, 0.5)" // 扇形の色
-) => {
-  if (ctx.value === null) return;
-  ctx.value.beginPath();
-
-  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
-  ctx.value.arc(
-    centerCoordinate.value.x,
-    centerCoordinate.value.y,
-    planet.radius,
-    planet.angularVelocity * time * -1 * timeScale.value,
-    planet.angularVelocity * (time * -1 * timeScale.value + period)
-  );
-  ctx.value.fillStyle = fillColor;
-  ctx.value.closePath();
-  ctx.value.fill();
-};
 // 恒星から惑星へのライン
 const drawLineStarToPlanet = (
   planet: Planet,
-  time: number = 0, // 開始角度
+  days: number = 0,
   lineColor: string = "rgba(255,255,255, 0.5)" // 扇形の色
 ) => {
   if (ctx.value === null) return;
@@ -219,9 +193,9 @@ const drawLineStarToPlanet = (
     centerCoordinate.value.x,
     centerCoordinate.value.y,
     planet.radius,
-    planet.angularVelocity * time * -1 * timeScale.value,
-    planet.angularVelocity * (time * -1 * timeScale.value)
-  );
+    (-1) * planet.angle(dayToYear(days)),
+    (-1) * planet.angle(dayToYear(days)),
+  )
   ctx.value.stroke();
   ctx.value.closePath();
 
@@ -230,13 +204,13 @@ const drawLineStarToPlanet = (
 // 衛星軌道
 const drawMoonOrbit = (
   moon: Moon,
-  time: number = 0,
+  days: number = 0,
   lineColor: string = "rgba(99,99,99, 0.4)" // 軌道の色
 ) => {
   if (ctx.value === null) return;
   // 惑星の位置を導出
   const { x, y } = getXYByRadians(
-    moon.planet.angularVelocity * time * timeScale.value,
+    moon.planet.angle(dayToYear(days)),
     moon.planet.radius
   );
   ctx.value.beginPath();
@@ -255,19 +229,19 @@ const drawMoonOrbit = (
 // 衛星を描画
 const drawMoon = (
   moon: Moon,
-  time: number = 0,
+  days: number = 0,
   fillColor: string = "rgba(255,255,200,0.9)"
 ) => {
   if (ctx.value === null) return;
   // 惑星の位置を導出
   const { x: planetX, y: planetY } = getXYByRadians(
-    moon.planet.angularVelocity * time * timeScale.value,
+    moon.planet.angle(dayToYear(days)),
     moon.planet.radius
   );
   ctx.value.beginPath();
   // 位置を導出
   const { x, y } = getXYByRadians(
-    moon.angularVelocity * time * timeScale.value,
+    moon.angle(dayToYear(days)),
     moon.radius
   );
   ctx.value.arc(
@@ -282,70 +256,16 @@ const drawMoon = (
   ctx.value.fill();
 };
 
-// 衛星円弧塗り潰し
-const drawMoonArcArea = (
-  moon: Moon,
-  time: number = 0, // 開始角度
-  period: number = 1, // 角度
-  fillColor: string = "rgba(255,255,255, 0.5)" // 扇形の色
-) => {
-  if (ctx.value === null) return;
-  // 惑星の位置を導出
-  const { x: planetX, y: planetY } = getXYByRadians(
-    moon.planet.angularVelocity * time * timeScale.value,
-    moon.planet.radius
-  );
-  ctx.value.beginPath();
-
-  // 惑星位置まで移動
-  ctx.value.moveTo(
-    centerCoordinate.value.x + planetX,
-    centerCoordinate.value.y + planetY
-  );
-  ctx.value.arc(
-    centerCoordinate.value.x + planetX,
-    centerCoordinate.value.y + planetY,
-    moon.radius,
-    moon.angularVelocity * time * -1 * timeScale.value,
-    moon.angularVelocity * (time * -1 * timeScale.value + period)
-  );
-
-  ctx.value.fillStyle = fillColor;
-  ctx.value.closePath();
-  ctx.value.fill();
-};
 </script>
 
 <style scoped>
 .canvas {
   border: 1px solid #000;
 }
-
-.input-range[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  background-color: #c7c7c7;
-  background: #c7c7c7;
-  border-color: #c7c7c7;
-  color: transparent;
-  height: 2px;
-  width: 100%;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 15px;
-  width: 15px;
-  border-radius: 50%;
-  background: #c7c7c7;
-  cursor: ew-resize;
-  box-shadow: 0 0 2px 0 #555;
-  transition: .3s ease-in-out;
-}
 </style>
 
 <template>
   <canvas :width="canvasScale * 2" :height="canvasScale * 2" class="canvas" id="canvas">
   </canvas>
-  <input type="range" v-model="beatSpeed" min="0" max="10" class="input-range">
+
 </template>
