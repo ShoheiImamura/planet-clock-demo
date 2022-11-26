@@ -18,7 +18,7 @@ type Coordinate = {
   y: number;
 };
 const ctx = ref<CanvasRenderingContext2D | null>(null);
-const canvasScale = ref(50);
+const canvasScale = ref(30);
 const centerCoordinate = ref<Coordinate>({
   x: canvasScale.value,
   y: canvasScale.value,
@@ -45,7 +45,7 @@ onMounted(() => {
 const drawMoon = () => {
   const moon = TheMoon;
   const year = dayToYear(props.dayCount);
-  const radius = 40;
+  const radius = canvasScale.value * 2 / 3;
   const angle = moon.angle(year) - moon.planet.angle(year)
 
   drawCircle(radius);
@@ -56,11 +56,11 @@ const drawMoon = () => {
   } else if (Math.sin(angle) >= 0 && Math.cos(angle) < 0) {
     // 下弦 -> 新月
     drawSemicirlce(radius, Math.PI * 1 / 2);
-    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'grey');
+    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'DimGray');
   } else if (Math.sin(angle) < 0 && Math.cos(angle) < 0) {
     // 新月 -> 上弦
     drawSemicirlce(radius, Math.PI * 3 / 2);
-    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'grey');
+    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'DimGray');
   } else {
     // 上弦 -> 満月
     drawSemicirlce(radius, Math.PI * 3 / 2);
@@ -70,7 +70,7 @@ const drawMoon = () => {
 // そのままの月
 const drawCircle = (
   radius: number,
-  fillColor: string = "grey",
+  fillColor: string = "DimGray",
   startAngle: number = 0,
   endAngle: number = Math.PI * 2
 ) => {
@@ -140,6 +140,6 @@ const drawEllipse = (
 
 <template>
   <div>
-    <canvas width="100" height="100" class="canvas" id="moon-syzygy-canvas"> </canvas>
+    <canvas :width="canvasScale * 2" :height="canvasScale * 2" class="canvas" id="moon-syzygy-canvas"> </canvas>
   </div>
 </template>
