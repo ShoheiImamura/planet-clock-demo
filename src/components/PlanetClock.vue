@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
-import MyCanvas from "./MyCanvas.vue";
+import SolarSystemCanvas from "./SolarSystemCanvas.vue";
+import MoonSyzygyCanvas from "./MoonSyzygyCanvas.vue";
 import { format, addDays, set, differenceInDays, getYear, getMonth, getDate } from "date-fns";
 
 defineProps({
@@ -24,7 +25,7 @@ const dayCount = ref(0); // 基準日からの経過日数
 
 
 const countedDate = () => { return addDays(baseDate, dayCount.value) };
-const beatSpeed = ref(100); // 1秒間のカウント数の逆数
+const beatSpeed = ref(40); // 1秒間のカウント数の逆数
 
 const incrementHour = () => {
   if (mode.value === 'auto_increment') {
@@ -58,7 +59,8 @@ const changeManualMode = () => {
 
 <template>
   <div class="">
-    <MyCanvas :day-count="dayCount" />
+    <SolarSystemCanvas :day-count="dayCount" />
+    <MoonSyzygyCanvas :day-count="dayCount" />
     <h1>{{ displayCountedDate() }}</h1>
     <button v-show="mode == 'manual'" @click="mode = 'auto_increment'">自動</button>
     <button v-show="mode == 'auto_increment'" @click="changeManualMode()">手動</button>
