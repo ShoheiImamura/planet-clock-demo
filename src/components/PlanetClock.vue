@@ -48,6 +48,9 @@ const incrementHour = () => {
 }
 onMounted(() => {
   setInterval(incrementHour, 1000 / beatSpeed.value); // 1時間(1/24日)づつカウント
+
+  // 最初の横並びの見た目が良くないため、日数を追加する
+  dayCount.value += 365.25;
 });
 
 // 基準日と表示カレンダーのunixタイムを比較する
@@ -71,13 +74,6 @@ watch(mode, () => {
   }
 })
 
-const changeManualMode = () => {
-  const countedDateTemp = countedDate();
-  calendarYear.value = getYear(countedDateTemp)
-  calendarMonth.value = getMonth(countedDateTemp)
-  calendarDay.value = getDate(countedDateTemp)
-  mode.value = 'manual';
-}
 const model = ref(null)
 </script>
 
