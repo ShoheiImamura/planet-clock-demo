@@ -130,7 +130,7 @@ const model = ref(null)
 <template>
   <div class="">
     <v-card>
-      <v-row class="mt-2 d-flex justify-center">
+      <v-row class="mt-2 d-flex justify-center" v-if="displayMenu">
         <v-btn-toggle v-model="mode" dark text mandatory>
           <v-btn value="current">
             現在
@@ -159,6 +159,7 @@ const model = ref(null)
               <div class="fill-height align-center justify-center">
                 <EarthRotationCanvas :day-count="dayCount()" :day-unix-time-count="dayUnixTimeCount()"
                   class="ma-2 pa-2" />
+                <h3 class="text-center">{{ displayCountedDate() }}</h3>
                 <h2 class="text-center">{{ displayCountedTime() }}</h2>
               </div>
             </v-card>
