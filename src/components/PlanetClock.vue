@@ -1,27 +1,33 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import SolarSystemCanvas from "./SolarSystemCanvas.vue";
-import MoonSyzygyCanvas from "./MoonSyzygyCanvas.vue";
+import EarthRotationCanvas from "./EarthRotationCanvas.vue";
 import { getUnixTime, fromUnixTime, getYear, getDate, getSeconds, getMonth, getHours, getMinutes } from "date-fns";
 import { format as formatTZ } from 'date-fns-tz';
 
 defineProps({
   msg: String,
+  displayMenu: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 const baseUnixTime = getUnixTime(new Date(1900, 2, 21, 0, 0, 0)); // 基準日時
 const unixTimeCount = ref(0); // 基準日時からの経過UnixTime
 const dayCount = () => {
-  const count = unixTimeCount.value / (60 * 60 * 24)
-  console.log(count)
-  return count
+  return unixTimeCount.value / (60 * 60 * 24)
 }; // 基準日時からの経過日数
+
+const dayUnixTimeCount = () => {
+  return unixTimeCount.value % (60 * 60 * 24)
+}; // 一日の中の経過unixtime
 
 const countedDateTime = () => { return fromUnixTime(baseUnixTime + unixTimeCount.value) };
 
 // 早送り
-const beatSpeed = ref(3); // 1秒間の count 回数
-const timePerCount = ref(60 * 60 * 24); // 1カウントごとに進めるunixtime
+const beatSpeed = ref(360); // 1秒間の count 回数
+const timePerCount = ref(1); // 1カウントごとに進めるunixtime
 const incrementTime = () => {
   if (mode.value === 'auto_increment') {
     unixTimeCount.value += timePerCount.value;
@@ -137,7 +143,7 @@ const model = ref(null)
           </v-btn>
         </v-btn-toggle>
       </v-row>
-      <v-row no-gutters>
+      <v-row no-gutters class="d-flex d-sm-none">
         <!-- mobile 表示の場合はカルーセル -->
         <v-carousel v-model="model" class="pa-4" :show-arrows="false" :hide-delimiters="true" :height="450">
           <v-carousel-item>
@@ -148,29 +154,36 @@ const model = ref(null)
                 <h3 class="text-center">{{ displayCountedTime() }}</h3>
               </div>
             </v-card>
-          </v-carousel-item>
-          <v-carousel-item>
-            <v-card color="grey-lighten-1" class="ma-4">
+          </v-carousel-item> <v-carousel-item>
+            <v-card class="ma-4" flat>
               <div class="fill-height align-center justify-center">
-                <MoonSyzygyCanvas :day-count="dayCount()" class="ma-2 pa-2" />
+                <EarthRotationCanvas :day-count="dayCount()" :day-unix-time-count="dayUnixTimeCount()"
+                  class="ma-2 pa-2" />
                 <h2 class="text-center">{{ displayCountedTime() }}</h2>
               </div>
             </v-card>
           </v-carousel-item>
         </v-carousel>
         <!-- tablet 以上の場合は横並び -->
-        <!-- <v-card class="ma-4" flat>
-          <div class="fill-height align-center justify-center">
-            <SolarSystemCanvas :day-count="dayCount()" class="ma-2 pa-2" />
-            <h2 class="text-center">{{ displayCountedDate() }}</h2>
-          </div>
-        </v-card>
-        <v-card color="grey-lighten-1" class="ma-4">
-          <div class="fill-height align-center justify-center">
-            <MoonSyzygyCanvas :day-count="dayCount()" class="ma-2 pa-2" />
-            <h2 class="text-center">{{ countedDateTime() }}</h2>
-          </div>
-        </v-card> -->
+      </v-row>
+      <v-row no-gutters class="d-none d-sm-flex">
+        <v-col cols="6">
+          <v-card class="ma-4" flat>
+            <div class="fill-height align-center justify-center">
+              <SolarSystemCanvas :day-count="dayCount()" class="ma-2 pa-2" />
+              <h2 class="text-center">{{ displayCountedDate() }}</h2>
+            </div>
+          </v-card>
+        </v-col>
+        <v-col cols="6">
+          <v-card class="ma-4" flat>
+            <div class="fill-height align-center justify-center">
+              <EarthRotationCanvas :day-count="dayCount()" :day-unix-time-count="dayUnixTimeCount()"
+                class="ma-2 pa-2" />
+              <h2 class="text-center">{{ displayCountedTime() }}</h2>
+            </div>
+          </v-card>
+        </v-col>
       </v-row>
     </v-card>
     <!-- 操作時 -->
@@ -179,6 +192,7 @@ const model = ref(null)
       <v-slider v-model="manualDateTime.month" min="0" max="11" density="compact" label="month"></v-slider>
       <v-slider v-model="manualDateTime.day" min="1" max="31" density="compact" label="  day"></v-slider>
       <v-slider v-model="manualDateTime.hour" min="0" max="24" density="compact" label="  hour"></v-slider>
+      <v-slider v-model="manualDateTime.minute" min="0" max="60" density="compact" label="  minute"></v-slider>
     </v-card>
     <!-- 早送り時 -->
     <v-card v-if="mode == 'auto_increment'" class="d-flex justify-center align-center">
@@ -186,13 +200,13 @@ const model = ref(null)
         <v-btn :value="0">
           <v-icon>mdi-stop</v-icon>
         </v-btn>
-        <v-btn :value="(60 * 60)">
+        <v-btn :value="(1)">
           <v-icon>mdi-play</v-icon>
         </v-btn>
-        <v-btn :value="(60 * 60 * 24)">
+        <v-btn :value="(60)">
           <v-icon>mdi-fast-forward</v-icon>
         </v-btn>
-        <v-btn :value="(60 * 60 * 24 * 30)">
+        <v-btn :value="(60 * 60)">
           <v-icon>mdi-skip-forward</v-icon>
         </v-btn>
       </v-btn-toggle>

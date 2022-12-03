@@ -32,7 +32,7 @@ const { isInnerConjunction, isOuterConjunction } = planetaryConjunction();
 
 onMounted(() => {
   // canvas要素を取得
-  const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+  const canvas = document.getElementById("solarSystemCanvas") as HTMLCanvasElement;
   ctx.value = canvas.getContext("2d");
   if (ctx.value === null) return;
   drawSolarSystem();
@@ -288,7 +288,7 @@ const drawMoon = (
 
 <template>
   <div class="d-flex justify-center">
-    <canvas :width="canvasScale * 2" :height="canvasScale * 2" class="canvas" id="canvas">
+    <canvas :width="canvasScale * 2" :height="canvasScale * 2" class="canvas" id="solarSystemCanvas">
     </canvas>
   </div>
 </template>
