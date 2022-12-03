@@ -5,7 +5,7 @@ import PlanetClock from "./components/PlanetClock.vue";
 const displayMenu = ref(false);
 </script>
 
-<template >
+<template>
   <v-app>
     <v-app-bar title="PLANET CLOCK" class="text-center">
       <v-app-bar-nav-icon @click="(displayMenu = !displayMenu)"><v-icon
