@@ -145,7 +145,7 @@ const model = ref(null)
       </v-row>
       <v-row no-gutters class="d-flex d-sm-none">
         <!-- mobile 表示の場合はカルーセル -->
-        <v-carousel v-model="model" class="pa-4" :show-arrows="false" :hide-delimiters="true" :height="450">
+        <v-carousel v-model="model" class="pa-4" :show-arrows="false" :height="500">
           <v-carousel-item>
             <v-card class="ma-4" flat>
               <div class="fill-height align-center justify-center">
