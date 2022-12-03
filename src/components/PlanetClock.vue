@@ -128,9 +128,9 @@ const model = ref(null)
 </script>
 
 <template>
-  <div class="">
-    <v-card>
-      <v-row class="mt-2 d-flex justify-center" v-if="displayMenu">
+  <div>
+    <v-card class="bg-black">
+      <v-row class="mt-2 d-flex justify-center " v-if="displayMenu">
         <v-btn-toggle v-model="mode" dark text mandatory>
           <v-btn value="current">
             現在
@@ -143,9 +143,9 @@ const model = ref(null)
           </v-btn>
         </v-btn-toggle>
       </v-row>
-      <v-row no-gutters class="d-flex d-sm-none">
+      <v-row no-gutters class="d-flex d-sm-none ">
         <!-- mobile 表示の場合はカルーセル -->
-        <v-carousel v-model="model" class="pa-4" :show-arrows="false" :height="500">
+        <v-carousel v-model="model" class="pa-4 black" :show-arrows="false" :height="500">
           <v-carousel-item>
             <v-card class="ma-4" flat>
               <div class="fill-height align-center justify-center">

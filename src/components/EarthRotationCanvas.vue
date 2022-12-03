@@ -258,11 +258,11 @@ const drawMoon = () => {
   } else if (Math.sin(angle) >= 0 && Math.cos(angle) < 0) {
     // 下弦 -> 新月
     drawSemicirlce(radius, Math.PI * 1 / 2);
-    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'DimGray');
+    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), '#212121');
   } else if (Math.sin(angle) < 0 && Math.cos(angle) < 0) {
     // 新月 -> 上弦
     drawSemicirlce(radius, Math.PI * 3 / 2);
-    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'DimGray');
+    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), '#212121');
   } else {
     // 上弦 -> 満月
     drawSemicirlce(radius, Math.PI * 3 / 2);
@@ -272,7 +272,7 @@ const drawMoon = () => {
 // そのままの月
 const drawCircle = (
   radius: number,
-  fillColor: string = "DimGray",
+  fillColor: string = "#212121",
   startAngle: number = 0,
   endAngle: number = Math.PI * 2
 ) => {
