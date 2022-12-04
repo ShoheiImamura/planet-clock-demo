@@ -143,47 +143,22 @@ const model = ref(null)
           </v-btn>
         </v-btn-toggle>
       </v-row>
-      <v-row no-gutters class="d-flex d-sm-none ">
-        <!-- mobile 表示の場合はカルーセル -->
-        <v-carousel v-model="model" class="pa-4 black" :show-arrows="false" :height="500">
-          <v-carousel-item>
-            <v-card class="ma-4" flat>
-              <div class="fill-height align-center justify-center">
-                <SolarSystemCanvas :day-count="dayCount()" class="ma-2 pa-2" />
-                <h2 class="text-center">{{ displayCountedDate() }}</h2>
-                <h3 class="text-center">{{ displayCountedTime() }}</h3>
-              </div>
-            </v-card>
-          </v-carousel-item> <v-carousel-item>
-            <v-card class="ma-4" flat>
-              <div class="fill-height align-center justify-center">
-                <EarthRotationCanvas :day-count="dayCount()" :day-unix-time-count="dayUnixTimeCount()"
-                  class="ma-2 pa-2" />
-                <h3 class="text-center">{{ displayCountedDate() }}</h3>
-                <h2 class="text-center">{{ displayCountedTime() }}</h2>
-              </div>
-            </v-card>
-          </v-carousel-item>
-        </v-carousel>
-        <!-- tablet 以上の場合は横並び -->
-      </v-row>
-      <v-row no-gutters class="d-none d-sm-flex">
-        <v-col cols="6">
-          <v-card class="ma-4" flat>
-            <div class="fill-height align-center justify-center">
-              <SolarSystemCanvas :day-count="dayCount()" class="ma-2 pa-2" />
-              <h2 class="text-center">{{ displayCountedDate() }}</h2>
-            </div>
-          </v-card>
+      <v-row no-gutters class="">
+        <v-col cols="12" sm="6">
+          <!-- <v-card class="ma-4" flat> -->
+          <div class="fill-height align-center justify-center">
+            <SolarSystemCanvas :day-count="dayCount()" class="ma-2 pa-2" />
+            <h2 class="text-center">{{ displayCountedDate() }}</h2>
+          </div>
+          <!-- </v-card> -->
         </v-col>
-        <v-col cols="6">
-          <v-card class="ma-4" flat>
-            <div class="fill-height align-center justify-center">
-              <EarthRotationCanvas :day-count="dayCount()" :day-unix-time-count="dayUnixTimeCount()"
-                class="ma-2 pa-2" />
-              <h2 class="text-center">{{ displayCountedTime() }}</h2>
-            </div>
-          </v-card>
+        <v-col cols="12" sm="6">
+          <!-- <v-card class="ma-4" flat> -->
+          <div class="fill-height align-center justify-center">
+            <EarthRotationCanvas :day-count="dayCount()" :day-unix-time-count="dayUnixTimeCount()" class="ma-2 pa-2" />
+            <h2 class="text-center">{{ displayCountedTime() }}</h2>
+          </div>
+          <!-- </v-card> -->
         </v-col>
       </v-row>
     </v-card>
