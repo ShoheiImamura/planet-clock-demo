@@ -82,6 +82,23 @@ const eventPlanetaryConjunction = (planetList: Planet[], year: number) => {
   return conjunctionList;
 }
 
+const drawPlanetaryConjunction = (planetList: Planet[], days: number) => {
+  const planetaryConjunctionList = eventPlanetaryConjunction(planetList, dayToYear(days))
+  if (planetaryConjunctionList.length !== 0) {
+    // 惑星会合ありの場合
+    planetList.forEach(planet => {
+      // list に planet 自身が含まれるかどうか
+      const isConjanction = planetaryConjunctionList.some((planetaryConjunction) => {
+        return planet == planetaryConjunction.planet1 || planet == planetaryConjunction.planet2
+      });
+      if (isConjanction) {
+        drawLineStarToPlanet(planet, days, 'rgba(100,255,255,0.5)', 2);
+        drawPlanet(planet, days, 4, 'rgba(100,255,255,0.5)');
+      }
+    });
+  }
+}
+
 const drawSolarSystem = () => {
   if (ctx.value === null) return;
 
@@ -113,6 +130,9 @@ const drawSolarSystem = () => {
 
   // 月（衛星）
   drawMoon(TheMoon, props.dayCount);
+
+  // 惑星会合
+  drawPlanetaryConjunction([Mercury, Venus, Earth, Mars, Jupiter, Saturn], props.dayCount);
 
 };
 
