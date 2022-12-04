@@ -165,7 +165,7 @@ const model = ref(null)
       </v-row>
     </v-card>
     <!-- 操作時 -->
-    <v-card v-show="mode == 'manual'" class="am-2">
+    <v-card v-show="mode == 'manual'" class="ma-2 pr-6">
       <v-slider v-model="manualDateTime.year" min="1900" max="2200" density="compact" label=" year"
         hide-details></v-slider>
       <v-slider v-model="manualDateTime.month" min="0" max="11" density="compact" label="month" hide-details></v-slider>
