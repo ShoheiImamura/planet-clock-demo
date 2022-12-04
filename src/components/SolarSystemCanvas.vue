@@ -53,7 +53,14 @@ const getXYByRadians = (radians: number, radius: number): Coordinate => {
     y: y,
   };
 };
-const planetList = [Uranus, Saturn, Jupiter, Mars, Earth, Venus, Mercury];
+const planetList = [
+  // Uranus,
+  // Saturn,
+  Jupiter,
+  Mars,
+  Earth,
+  Venus,
+  Mercury];
 
 // 惑星会合
 const eventPlanetaryConjunction = (year: number) => {
@@ -83,32 +90,25 @@ const drawSolarSystem = () => {
   drawBackGround(canvasScale.value);
 
   // 惑星
-  const planetaryConjunctionList = eventPlanetaryConjunction(dayToYear(props.dayCount))
-  if (planetaryConjunctionList.length !== 0) {
-    // 惑星会合ありの場合
-    planetList.forEach(planet => {
-      // list に planet 自身が含まれるかどうか
-      const isConjanction = planetaryConjunctionList.some((planetaryConjunction) => {
-        return planet == planetaryConjunction.planet1 || planet == planetaryConjunction.planet2
-      });
-      if (isConjanction) {
-        drawPlanetaryOrbit(planet);
-        drawLineStarToPlanet(planet, props.dayCount, 'rgba(255,255,255,1)', 2);
-        drawPlanet(planet, props.dayCount, planet.size);
-      } else {
-        drawPlanetaryOrbit(planet);
-        drawLineStarToPlanet(planet, props.dayCount, 'rgba(120,120,120,0.5)',);
-        drawPlanet(planet, props.dayCount, planet.size, 'rgba(120,120,120,0.5)');
-      }
-    });
-  } else {
-    // 惑星会合なしの場合
-    planetList.forEach(planet => {
-      drawPlanetaryOrbit(planet);
-      drawLineStarToPlanet(planet, props.dayCount);
-      drawPlanet(planet, props.dayCount, planet.size);
-    });
-  }
+  // 土星
+  // drawLineStarToPlanet(Saturn, props.dayCount);
+  drawPlanet(Saturn, props.dayCount, Saturn.size);
+  // 木星
+  // drawLineStarToPlanet(Jupiter, props.dayCount);
+  drawPlanet(Jupiter, props.dayCount, Jupiter.size);
+  // 火星
+  // drawLineStarToPlanet(Mars, props.dayCount);
+  drawPlanet(Mars, props.dayCount, Mars.size);
+  // 地球
+  drawPlanetaryOrbit(Earth);
+  drawLineStarToPlanet(Earth, props.dayCount);
+  drawPlanet(Earth, props.dayCount, Earth.size);
+  // 金星
+  drawLineStarToPlanet(Venus, props.dayCount);
+  drawPlanet(Venus, props.dayCount, Venus.size);
+  // 水星
+  drawLineStarToPlanet(Mercury, props.dayCount);
+  drawPlanet(Mercury, props.dayCount, Mercury.size);
 
   // 太陽（恒星）
   drawStar(3);

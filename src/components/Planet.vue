@@ -54,7 +54,7 @@ export const planet = () => {
   const Earth: Planet = {
     radiusRatio: 1,
     japaneseName: "地球",
-    size: 4,
+    size: 3,
     orbitalPeriod: 1, // 
     angularVelocity: Math.PI * 2 * (1 / 1),
     angle: (year: number) => { return 0 + Earth.angularVelocity * year },
@@ -64,7 +64,7 @@ export const planet = () => {
   const Mars: Planet = {
     radiusRatio: 1.52,
     japaneseName: "火星",
-    size: 5,
+    size: 3,
     orbitalPeriod: 1.88,
     angularVelocity: Math.PI * 2 * (1 / 1.88),
     angle: (year: number) => { return 0 + Mars.angularVelocity * year },
@@ -74,7 +74,7 @@ export const planet = () => {
   const Jupiter: Planet = {
     radiusRatio: 1.70,
     japaneseName: "木星",
-    size: 6,
+    size: 4,
     orbitalPeriod: 11.8,
     angularVelocity: Math.PI * 2 * (1 / 11.8),
     angle: (year: number) => { return 0 + Jupiter.angularVelocity * year },
@@ -83,7 +83,7 @@ export const planet = () => {
   const Saturn: Planet = {
     radiusRatio: 1.80,
     japaneseName: "土星",
-    size: 5,
+    size: 3,
     orbitalPeriod: 29.4,
     angularVelocity: Math.PI * 2 * (1 / 29.4),
     angle: (year: number) => { return 0 + Saturn.angularVelocity * year },
@@ -92,7 +92,7 @@ export const planet = () => {
   const Uranus: Planet = {
     radiusRatio: 1.90,
     japaneseName: "天王星",
-    size: 4,
+    size: 3,
     orbitalPeriod: 84.0,
     angularVelocity: Math.PI * 2 * (1 / 84.0),
     angle: (year: number) => { return 0 + Uranus.angularVelocity * year },
