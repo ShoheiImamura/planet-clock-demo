@@ -105,7 +105,6 @@ const drawSolarSystem = () => {
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
 
   // 背景
-  drawBackGround(canvasScale.value);
   // 惑星図形
   drawPlanetsView([Mercury, Venus, Earth, Mars, Jupiter, Saturn], props.dayCount, 'rgba(50,50,50,0.5)');
 
@@ -118,8 +117,8 @@ const drawSolarSystem = () => {
   // 火星
   drawPlanet(Mars, props.dayCount, Mars.size);
   // 地球
-  drawPlanetaryOrbit(Earth);
-  drawLineStarToPlanet(Earth, props.dayCount, 'rgba(255,255,255,1)', 1.5);
+  drawPlanetaryOrbit(Earth, 'rgba(100,100,100,0.5)');
+  drawLineStarToPlanet(Earth, props.dayCount, 'rgba(255,255,255,1)', 2);
   drawPlanet(Earth, props.dayCount, Earth.size);
   // 金星
   drawPlanet(Venus, props.dayCount, Venus.size);
@@ -140,8 +139,8 @@ const drawSolarSystem = () => {
 const drawBackGround = (radius: number) => {
   const forCount = 2
   for (let index = 0; index < forCount; index++) {
-    drawFilledCircle(radius, "rgb(15,15,15)", Math.PI * (index * 2 + 0) / forCount, Math.PI * (index * 2 + 1) / forCount);
-    drawFilledCircle(radius, "rgb(5,5,5)", Math.PI * (index * 2 + 1) / forCount, Math.PI * (index * 2 + 2) / forCount);
+    drawFilledCircle(radius, "rgba(20,20,20,1)", Math.PI * (index * 2 + 0) / forCount, Math.PI * (index * 2 + 1) / forCount);
+    drawFilledCircle(radius, "rgba(10,10,10,1)", Math.PI * (index * 2 + 1) / forCount, Math.PI * (index * 2 + 2) / forCount);
   }
 };
 
@@ -191,7 +190,7 @@ const drawFilledCircle = (
 // 惑星軌道を描画
 const drawPlanetaryOrbit = (
   planet: Planet,
-  lineColor: string = "rgba(130,130,130,0.6)" // 軌道の色
+  lineColor: string = "rgba(100,100,100,0.5)" // 軌道の色
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
@@ -203,6 +202,7 @@ const drawPlanetaryOrbit = (
     0,
     2 * Math.PI
   );
+  ctx.value.lineWidth = 3;
   ctx.value.stroke();
   ctx.value.closePath();
 };

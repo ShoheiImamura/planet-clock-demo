@@ -130,7 +130,7 @@ const model = ref(null)
 <template>
   <div>
     <v-card class="bg-black">
-      <v-row class="mt-2 d-flex justify-center " v-if="displayMenu">
+      <v-row class="ma-2 d-flex justify-center " v-if="displayMenu">
         <v-btn-toggle v-model="mode" dark text mandatory>
           <v-btn value="current">
             現在
@@ -143,6 +143,8 @@ const model = ref(null)
           </v-btn>
         </v-btn-toggle>
       </v-row>
+    </v-card>
+    <v-card class="bg-black">
       <v-row no-gutters class="">
         <v-col cols="12" sm="6">
           <!-- <v-card class="ma-4" flat> -->
@@ -163,7 +165,7 @@ const model = ref(null)
       </v-row>
     </v-card>
     <!-- 操作時 -->
-    <v-card v-show="mode == 'manual'" class="pa-2">
+    <v-card v-show="mode == 'manual'" class="am-2">
       <v-slider v-model="manualDateTime.year" min="1900" max="2200" density="compact" label=" year"></v-slider>
       <v-slider v-model="manualDateTime.month" min="0" max="11" density="compact" label="month"></v-slider>
       <v-slider v-model="manualDateTime.day" min="1" max="31" density="compact" label="  day"></v-slider>
@@ -171,7 +173,7 @@ const model = ref(null)
       <v-slider v-model="manualDateTime.minute" min="0" max="60" density="compact" label="  minute"></v-slider>
     </v-card>
     <!-- 早送り時 -->
-    <v-card v-if="mode == 'auto_increment'" class="d-flex justify-center align-center">
+    <v-card v-if="mode == 'auto_increment'" class="ma-2 d-flex justify-center align-center">
       <v-btn-toggle v-model="timePerCount">
         <v-btn :value="0">
           <v-icon>mdi-stop</v-icon>

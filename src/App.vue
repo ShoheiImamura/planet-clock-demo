@@ -7,7 +7,7 @@ const displayMenu = ref(false);
 
 <template>
   <v-app>
-    <v-app-bar title="PLANET CLOCK" class="text-center">
+    <v-app-bar title="PLANET CLOCK" class="text-center" density="compact">
       <v-app-bar-nav-icon @click="(displayMenu = !displayMenu)"><v-icon
           btn>mdi-dots-vertical</v-icon></v-app-bar-nav-icon>
     </v-app-bar>
