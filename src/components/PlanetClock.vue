@@ -166,11 +166,13 @@ const model = ref(null)
     </v-card>
     <!-- 操作時 -->
     <v-card v-show="mode == 'manual'" class="am-2">
-      <v-slider v-model="manualDateTime.year" min="1900" max="2200" density="compact" label=" year"></v-slider>
-      <v-slider v-model="manualDateTime.month" min="0" max="11" density="compact" label="month"></v-slider>
-      <v-slider v-model="manualDateTime.day" min="1" max="31" density="compact" label="  day"></v-slider>
-      <v-slider v-model="manualDateTime.hour" min="0" max="24" density="compact" label="  hour"></v-slider>
-      <v-slider v-model="manualDateTime.minute" min="0" max="60" density="compact" label="  minute"></v-slider>
+      <v-slider v-model="manualDateTime.year" min="1900" max="2200" density="compact" label=" year"
+        hide-details></v-slider>
+      <v-slider v-model="manualDateTime.month" min="0" max="11" density="compact" label="month" hide-details></v-slider>
+      <v-slider v-model="manualDateTime.day" min="1" max="31" density="compact" label="  day" hide-details></v-slider>
+      <v-slider v-model="manualDateTime.hour" min="0" max="24" density="compact" label="  hour" hide-details></v-slider>
+      <v-slider v-model="manualDateTime.minute" min="0" max="60" density="compact" label="  minute"
+        hide-details></v-slider>
     </v-card>
     <!-- 早送り時 -->
     <v-card v-if="mode == 'auto_increment'" class="ma-2 d-flex justify-center align-center">

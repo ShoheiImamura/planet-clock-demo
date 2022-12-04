@@ -105,6 +105,8 @@ const drawSolarSystem = () => {
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
 
   // 背景
+  // 春分線
+  drawVernalEquinox();
   // 惑星図形
   drawPlanetsView([Mercury, Venus, Earth, Mars, Jupiter, Saturn], props.dayCount, 'rgba(50,50,50,0.5)');
 
@@ -293,6 +295,19 @@ const drawPlanetsView = (planets: Planet[], days: number, fillColor: string = 'r
   ctx.value.closePath();
   ctx.value.fillStyle = fillColor;
   ctx.value.fill();
+}
+
+const drawVernalEquinox = () => {
+  if (ctx.value === null) return;
+  ctx.value.beginPath();
+  ctx.value.lineWidth = 2;
+  ctx.value.strokeStyle = 'rgba(100,100,100,1)';
+
+  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
+  ctx.value.lineTo(centerCoordinate.value.x + Earth.radiusRatio * canvasScale.value / 2, centerCoordinate.value.y)
+  ctx.value.stroke();
+  ctx.value.closePath();
+  ctx.value.lineWidth = 1; // reset
 }
 
 </script>
