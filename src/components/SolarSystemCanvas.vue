@@ -1,6 +1,6 @@
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, toRefs } from "vue";
 import { planet } from "./Planet.vue";
 import { Planet, Moon, } from "./Planet.vue";
 import { planetaryConjunction } from "./PlanetaryConjunction.vue";
@@ -10,6 +10,10 @@ const props = defineProps({
   dayCount: {
     type: Number,
     default: 0,
+  },
+  divWidth: {
+    type: Number,
+    default: 0
   }
 });
 
@@ -19,14 +23,26 @@ type Coordinate = {
 };
 
 const ctx = ref<CanvasRenderingContext2D | null>(null);
-const canvasScale = ref(120);
-const centerCoordinate = ref<Coordinate>({
-  x: canvasScale.value,
-  y: canvasScale.value,
-});
+const canvasScale = ref(150);
+
+const centerCoordinate = (): Coordinate => {
+  return {
+    x: canvasScale.value,
+    y: canvasScale.value,
+  }
+};
+const { divWidth } = toRefs(props)
+watch(divWidth, () => {
+  console.log(divWidth.value)
+  if (divWidth.value < 300) {
+    canvasScale.value = divWidth.value / 2
+  } else {
+    canvasScale.value = 150
+  }
+})
 
 // 惑星
-const { Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, TheMoon } = planet();
+const { Mercury, Venus, Earth, Mars, Jupiter, Saturn, TheMoon } = planet();
 // 惑星会合
 const { isInnerConjunction, isOuterConjunction } = planetaryConjunction();
 
@@ -103,10 +119,12 @@ const drawSolarSystem = () => {
   if (ctx.value === null) return;
 
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
+  // 全体背景
+  drawBackGround(canvasScale.value, 'black');
 
   // 惑星図形
   drawPlanetsView([Mercury, Venus, Earth, Mars, Jupiter, Saturn], props.dayCount, 'rgba(128,128,128,0.5)');
-  // 背景
+  // 地球の背景
   drawBackGround(Earth.radiusRatio * canvasScale.value / 2);
   // 春分線
   drawVernalEquinox();
@@ -142,10 +160,10 @@ const drawSolarSystem = () => {
 const drawBackGround = (radius: number, fillColor = 'rgba(0,0,0, 0.5)') => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
-  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
+  ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
   ctx.value.arc(
-    centerCoordinate.value.x,
-    centerCoordinate.value.y,
+    centerCoordinate().x,
+    centerCoordinate().y,
     radius,
     0,
     Math.PI * 2
@@ -186,10 +204,10 @@ const drawFilledCircle = (
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
-  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
+  ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
   ctx.value.arc(
-    centerCoordinate.value.x,
-    centerCoordinate.value.y,
+    centerCoordinate().x,
+    centerCoordinate().y,
     radius,
     startAngle,
     endAngle
@@ -207,8 +225,8 @@ const drawPlanetaryOrbit = (
   ctx.value.beginPath();
   ctx.value.strokeStyle = lineColor;
   ctx.value.arc(
-    centerCoordinate.value.x,
-    centerCoordinate.value.y,
+    centerCoordinate().x,
+    centerCoordinate().y,
     planet.radiusRatio * canvasScale.value / 2,
     0,
     2 * Math.PI
@@ -230,10 +248,10 @@ const drawLineStarToPlanet = (
   ctx.value.lineWidth = lineWidth;
   ctx.value.strokeStyle = lineColor;
 
-  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
+  ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
   ctx.value.arc(
-    centerCoordinate.value.x,
-    centerCoordinate.value.y,
+    centerCoordinate().x,
+    centerCoordinate().y,
     planet.radiusRatio * canvasScale.value / 2,
     (-1) * planet.angle(dayToYear(days)),
     (-1) * planet.angle(dayToYear(days)),
@@ -312,8 +330,8 @@ const drawVernalEquinox = () => {
   ctx.value.lineWidth = 2;
   ctx.value.strokeStyle = 'rgba(100,100,100,1)';
 
-  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
-  ctx.value.lineTo(centerCoordinate.value.x + Earth.radiusRatio * canvasScale.value / 2, centerCoordinate.value.y)
+  ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
+  ctx.value.lineTo(centerCoordinate().x + Earth.radiusRatio * canvasScale.value / 2, centerCoordinate().y)
   ctx.value.stroke();
   ctx.value.closePath();
   ctx.value.lineWidth = 1; // reset

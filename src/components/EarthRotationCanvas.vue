@@ -1,6 +1,6 @@
 
 <script lang="ts" setup>
-import { ref, onMounted, watch, defineProps } from "vue";
+import { ref, onMounted, watch, toRefs } from "vue";
 import { planet } from "./Planet.vue";
 import { Planet, Moon, } from "./Planet.vue";
 
@@ -12,6 +12,10 @@ const props = defineProps({
   dayUnixTimeCount: { // 1日の中での unix time
     type: Number,
     default: 0,
+  },
+  divWidth: {
+    type: Number,
+    default: 0
   }
 });
 
@@ -21,11 +25,22 @@ type Coordinate = {
 };
 
 const ctx = ref<CanvasRenderingContext2D | null>(null);
-const canvasScale = ref(120);
-const centerCoordinate = ref<Coordinate>({
-  x: canvasScale.value,
-  y: canvasScale.value,
-});
+const canvasScale = ref(150);
+const centerCoordinate = (): Coordinate => {
+  return {
+    x: canvasScale.value,
+    y: canvasScale.value,
+  }
+};
+const { divWidth } = toRefs(props)
+watch(divWidth, () => {
+  console.log(divWidth.value)
+  if (divWidth.value < 300) {
+    canvasScale.value = divWidth.value / 2
+  } else {
+    canvasScale.value = 150
+  }
+})
 
 // 惑星
 const { Earth, TheMoon } = planet();
@@ -41,7 +56,7 @@ onMounted(() => {
 const drawEarthRotation = () => {
   if (ctx.value === null) return;
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
-  drawBackGround(canvasScale.value - 10);
+  drawBackGround(canvasScale.value); // 全体背景
   drawEarth(Earth, props.dayCount, canvasScale.value / 2);
   drawSun(Earth, props.dayCount, 3);
   drawLineSunToEarth(Earth, props.dayCount);
@@ -90,8 +105,8 @@ const drawPlace = (radius: number, earth: typeof Earth, days: number, time: numb
     canvasScale.value / 2
   );
   ctx.value.arc(
-    centerCoordinate.value.x + x,
-    centerCoordinate.value.y + y,
+    centerCoordinate().x + x,
+    centerCoordinate().y + y,
     radius,
     0,
     Math.PI * 2
@@ -109,10 +124,10 @@ const drawPlaceLine = (radius: number, earth: typeof Earth, days: number, time: 
   const earthAngle = (-1) * earth.angle(dayToYear(days)) // 地球の角度
   const placeAngle = Math.PI * 2 * (time / (60 * 60 * 24));// 場所の相対角度
   ctx.value.beginPath();
-  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
+  ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
   ctx.value.arc(
-    centerCoordinate.value.x,
-    centerCoordinate.value.y,
+    centerCoordinate().x,
+    centerCoordinate().y,
     canvasScale.value / 2,
     (-1) * (placeAngle - earthAngle),
     (-1) * (placeAngle - earthAngle),
@@ -138,8 +153,8 @@ const drawSun = (
     1.9 * canvasScale.value / 2
   );
   ctx.value.arc(
-    centerCoordinate.value.x + x,
-    centerCoordinate.value.y + y,
+    centerCoordinate().x + x,
+    centerCoordinate().y + y,
     StarRadius,
     0,
     Math.PI * 2
@@ -160,10 +175,10 @@ const drawFilledCircle = (
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
-  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
+  ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
   ctx.value.arc(
-    centerCoordinate.value.x,
-    centerCoordinate.value.y,
+    centerCoordinate().x,
+    centerCoordinate().y,
     radius,
     startAngle,
     endAngle
@@ -181,8 +196,8 @@ const drawPlanetaryOrbit = (
   ctx.value.beginPath();
   ctx.value.strokeStyle = lineColor;
   ctx.value.arc(
-    centerCoordinate.value.x,
-    centerCoordinate.value.y,
+    centerCoordinate().x,
+    centerCoordinate().y,
     planet.radiusRatio * canvasScale.value / 2,
     0,
     2 * Math.PI
@@ -206,10 +221,10 @@ const drawLineSunToEarth = (
   const sunAngle = planet.angle(dayToYear(days)) + Math.PI;
 
   ctx.value.strokeStyle = 'rgba(255,255,255, 0.5)';
-  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
+  ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
   ctx.value.arc(
-    centerCoordinate.value.x,
-    centerCoordinate.value.y,
+    centerCoordinate().x,
+    centerCoordinate().y,
     canvasScale.value / 2,
     (-1) * (sunAngle + Math.PI),
     (-1) * (sunAngle + Math.PI),
@@ -238,7 +253,7 @@ const setMoonCoordinate = (
     radius
   );
   moonCoordinate.value = {
-    x: centerCoordinate.value.x + x, y: centerCoordinate.value.y + y
+    x: centerCoordinate().x + x, y: centerCoordinate().y + y
   }
 }
 // 月の描画

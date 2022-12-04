@@ -125,11 +125,14 @@ onMounted(() => {
 });
 
 const model = ref(null)
+
+const solarSystemCanvasDiv = ref();
+const earthRotationCanvasDiv = ref();
 </script>
 
 <template>
   <div>
-    <v-card class="bg-black">
+    <v-card class="">
       <v-row class="ma-2 d-flex justify-center " v-if="displayMenu">
         <v-btn-toggle v-model="mode" dark text mandatory>
           <v-btn value="current">
@@ -144,23 +147,23 @@ const model = ref(null)
         </v-btn-toggle>
       </v-row>
     </v-card>
-    <v-card class="bg-black">
-      <v-row no-gutters class="">
-        <v-col cols="12" sm="6">
-          <!-- <v-card class="ma-4" flat> -->
-          <div class="fill-height align-center justify-center">
-            <SolarSystemCanvas :day-count="dayCount()" class="ma-2 pa-2" />
-            <h2 class="text-center">{{ displayCountedDate() }}</h2>
+    <v-card class="">
+      <v-row no-gutters class="clock-area">
+        <v-col cols="6">
+          <div class="fill-height align-center justify-center" ref="solarSystemCanvasDiv">
+            <SolarSystemCanvas :day-count="dayCount()" :div-width="solarSystemCanvasDiv?.clientWidth"
+              class="ma-2 pa-2" />
           </div>
-          <!-- </v-card> -->
         </v-col>
-        <v-col cols="12" sm="6">
-          <!-- <v-card class="ma-4" flat> -->
-          <div class="fill-height align-center justify-center">
-            <EarthRotationCanvas :day-count="dayCount()" :day-unix-time-count="dayUnixTimeCount()" class="ma-2 pa-2" />
-            <h2 class="text-center">{{ displayCountedTime() }}</h2>
+        <v-col cols="6">
+          <div class="fill-height align-center justify-center" ref="earthRotationCanvasDiv">
+            <EarthRotationCanvas :day-count="dayCount()" :day-unix-time-count="dayUnixTimeCount()"
+              :div-width="earthRotationCanvasDiv?.clientWidth" class="ma-2 pa-2" />
           </div>
-          <!-- </v-card> -->
+        </v-col>
+        <v-col cols="12">
+          <h2 class="text-center">{{ displayCountedDate() }}</h2>
+          <h3 class="text-center">{{ displayCountedTime() }}</h3>
         </v-col>
       </v-row>
     </v-card>
@@ -195,5 +198,7 @@ const model = ref(null)
 </template>
 
 <style scoped>
-
+.clock-area {
+  background-color: #111111;
+}
 </style>
