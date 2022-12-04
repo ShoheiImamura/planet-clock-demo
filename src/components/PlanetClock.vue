@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from "vue";
 import SolarSystemCanvas from "./SolarSystemCanvas.vue";
 import EarthRotationCanvas from "./EarthRotationCanvas.vue";
-import { getUnixTime, fromUnixTime, getYear, getDate, getSeconds, getMonth, getHours, getMinutes } from "date-fns";
+import { getUnixTime, fromUnixTime, getYear, getDate, getSeconds, getMonth, getHours, getMinutes, getDayOfYear } from "date-fns";
 import { format as formatTZ } from 'date-fns-tz';
 
 defineProps({
@@ -47,8 +47,7 @@ const setCurrentDateTime = () => {
 // 操作用
 const manualDateTime = ref({
   year: 1990,
-  month: 2,
-  day: 21,
+  day: 80,
   hour: 0,
   minute: 0,
   second: 0,
@@ -56,22 +55,27 @@ const manualDateTime = ref({
 const setManualDateTime = () => {
   const manualUnixTime = getUnixTime(new Date(
     manualDateTime.value.year,
-    manualDateTime.value.month,
+    0,
     manualDateTime.value.day,
     manualDateTime.value.hour,
     manualDateTime.value.minute,
-    manualDateTime.value.second));
+    manualDateTime.value.second
+  ));
   unixTimeCount.value = manualUnixTime - baseUnixTime;
 }
 const setTimeToManualDateTime = () => {
   const dateTime = countedDateTime();
+
   manualDateTime.value = {
     year: getYear(dateTime),
-    month: getMonth(dateTime),
-    day: getDate(dateTime),
-    hour: getHours(dateTime),
-    minute: getMinutes(dateTime),
-    second: getSeconds(dateTime),
+    day: getDayOfYear(dateTime),
+    hour: 0,
+    minute: getHours(dateTime) * 60 + getMinutes(dateTime),
+    second: 0, // 0 に初期化
+  }
+  if (manualDateTime.value.day < 80) {
+    manualDateTime.value.day += 365
+    manualDateTime.value.year -= 1
   }
 }
 
@@ -169,12 +173,11 @@ const earthRotationCanvasDiv = ref();
     </v-card>
     <!-- 操作時 -->
     <v-card v-show="mode == 'manual'" class="ma-2 pr-6">
-      <v-slider v-model="manualDateTime.year" min="1900" max="2200" density="compact" label=" year"
+      <v-slider v-model="manualDateTime.year" min="1900" max="2200" density="compact" label="years"
         hide-details></v-slider>
-      <v-slider v-model="manualDateTime.month" min="0" max="11" density="compact" label="month" hide-details></v-slider>
-      <v-slider v-model="manualDateTime.day" min="1" max="31" density="compact" label="  day" hide-details></v-slider>
-      <v-slider v-model="manualDateTime.hour" min="0" max="24" density="compact" label="  hour" hide-details></v-slider>
-      <v-slider v-model="manualDateTime.minute" min="0" max="60" density="compact" label="  minute"
+      <v-slider v-model="manualDateTime.day" min="80" max="445" density="compact" label=" / year"
+        hide-details></v-slider>
+      <v-slider v-model="manualDateTime.minute" min="0" max="1440" density="compact" label=" / day"
         hide-details></v-slider>
     </v-card>
     <!-- 早送り時 -->

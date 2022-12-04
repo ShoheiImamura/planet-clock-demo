@@ -54,7 +54,7 @@ export const planet = () => {
   const Earth: Planet = {
     radiusRatio: 1,
     japaneseName: "地球",
-    size: 3,
+    size: 2,
     orbitalPeriod: 1, // 
     angularVelocity: Math.PI * 2 * (1 / 1),
     angle: (year: number) => { return 0 + Earth.angularVelocity * year },

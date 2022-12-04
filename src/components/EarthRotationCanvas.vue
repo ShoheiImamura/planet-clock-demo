@@ -59,8 +59,8 @@ const drawEarthRotation = () => {
   drawBackGround(canvasScale.value); // 全体背景
   drawEarth(Earth, props.dayCount, canvasScale.value / 2);
   drawSun(Earth, props.dayCount, 3);
-  drawLineSunToEarth(Earth, props.dayCount);
-  drawPlace(3, Earth, props.dayCount, props.dayUnixTimeCount);
+  drawLineSunToEarth(Earth, props.dayCount, 'rgba(255,255,255,0.8)', 2);
+  drawPlace(2, Earth, props.dayCount, props.dayUnixTimeCount);
   drawPlaceLine(3, Earth, props.dayCount, props.dayUnixTimeCount);
   drawMoon();
 }
@@ -94,7 +94,7 @@ const drawEarth = (earth: typeof Earth, days: number, radius: number) => {
 };
 
 // 地点を描画
-const drawPlace = (radius: number, earth: typeof Earth, days: number, time: number) => {
+const drawPlace = (radius: number, earth: typeof Earth, days: number, time: number, fillColor: string = 'rgba(255,0,0,1)') => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
   // 位置を導出
@@ -111,28 +111,27 @@ const drawPlace = (radius: number, earth: typeof Earth, days: number, time: numb
     0,
     Math.PI * 2
   );
-  ctx.value.fillStyle = 'white';
+  ctx.value.fillStyle = fillColor;
   ctx.value.fill();
   ctx.value.closePath();
 };
 
 
-// 地点を描画
-const drawPlaceLine = (radius: number, earth: typeof Earth, days: number, time: number) => {
+// 地点までの線
+const drawPlaceLine = (radius: number, earth: typeof Earth, days: number, time: number, lineColor: string = 'rgba(255,0,0,1)') => {
   if (ctx.value === null) return;
   // 位置を導出
   const earthAngle = (-1) * earth.angle(dayToYear(days)) // 地球の角度
   const placeAngle = Math.PI * 2 * (time / (60 * 60 * 24));// 場所の相対角度
+  const { x, y } = getXYByRadians(
+    placeAngle - earthAngle,
+    canvasScale.value / 2
+  );
+  ctx.value.strokeStyle = lineColor;
+  ctx.value.lineWidth = 2;
   ctx.value.beginPath();
   ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
-  ctx.value.arc(
-    centerCoordinate().x,
-    centerCoordinate().y,
-    canvasScale.value / 2,
-    (-1) * (placeAngle - earthAngle),
-    (-1) * (placeAngle - earthAngle),
-  );
-  ctx.value.strokeStyle = 'white';
+  ctx.value.lineTo(centerCoordinate().x + x, centerCoordinate().y + y);
   ctx.value.stroke();
   ctx.value.closePath();
 };
@@ -219,8 +218,6 @@ const drawLineSunToEarth = (
   ctx.value.lineWidth = lineWidth;
   ctx.value.strokeStyle = lineColor;
   const sunAngle = planet.angle(dayToYear(days)) + Math.PI;
-
-  ctx.value.strokeStyle = 'rgba(255,255,255, 0.5)';
   ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
   ctx.value.arc(
     centerCoordinate().x,

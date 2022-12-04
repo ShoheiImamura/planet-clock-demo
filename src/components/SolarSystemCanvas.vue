@@ -139,8 +139,8 @@ const drawSolarSystem = () => {
   drawPlanet(Mars, props.dayCount, Mars.size);
   // 地球
   drawPlanetaryOrbit(Earth, 'rgba(100,100,100,0.5)');
-  drawLineStarToPlanet(Earth, props.dayCount, 'rgba(255,255,255,1)', 2);
-  drawPlanet(Earth, props.dayCount, Earth.size);
+  drawLineStarToPlanet(Earth, props.dayCount, 'rgba(255,0,0,1)', 2);
+  drawPlanet(Earth, props.dayCount, Earth.size, 'rgba(255,0,0,1)');
   // 金星
   drawPlanet(Venus, props.dayCount, Venus.size);
   // 水星
@@ -324,11 +324,12 @@ const drawPlanetsView = (planets: Planet[], days: number, fillColor: string = 'r
   ctx.value.fill();
 }
 
+// 春分線
 const drawVernalEquinox = () => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
   ctx.value.lineWidth = 2;
-  ctx.value.strokeStyle = 'rgba(100,100,100,1)';
+  ctx.value.strokeStyle = 'rgba(255,255,255,0.8)';
 
   ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
   ctx.value.lineTo(centerCoordinate().x + Earth.radiusRatio * canvasScale.value / 2, centerCoordinate().y)
