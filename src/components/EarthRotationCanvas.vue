@@ -67,7 +67,7 @@ const getXYByRadians = (radians: number, radius: number): Coordinate => {
 
 // 背景
 const drawBackGround = (radius: number) => {
-  drawFilledCircle(radius, "black");
+  drawFilledCircle(radius, "rgb(0,0,0)");
 }
 
 // 地球を描画

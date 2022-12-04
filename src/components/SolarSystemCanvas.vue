@@ -60,10 +60,11 @@ const planetList = [
   Mars,
   Earth,
   Venus,
-  Mercury];
+  Mercury
+];
 
 // 惑星会合
-const eventPlanetaryConjunction = (year: number) => {
+const eventPlanetaryConjunction = (planetList: Planet[], year: number) => {
   const conjunctionList: planetaryConjunctionType[] = [];
   planetList.forEach((planet1, index1) => {
     planetList.forEach((planet2, index2) => {
@@ -90,6 +91,7 @@ const drawSolarSystem = () => {
   drawBackGround(canvasScale.value);
   // 惑星図形
   drawPlanetsView([Mercury, Venus, Earth, Mars, Jupiter, Saturn], props.dayCount, 'rgba(50,50,50,0.5)');
+
 
   // 惑星
   // 土星
@@ -118,8 +120,8 @@ const drawSolarSystem = () => {
 const drawBackGround = (radius: number) => {
   const forCount = 2
   for (let index = 0; index < forCount; index++) {
-    drawFilledCircle(radius, "black", Math.PI * (index * 2 + 0) / forCount, Math.PI * (index * 2 + 1) / forCount);
-    drawFilledCircle(radius, "rgb(20,20,20)", Math.PI * (index * 2 + 1) / forCount, Math.PI * (index * 2 + 2) / forCount);
+    drawFilledCircle(radius, "rgb(15,15,15)", Math.PI * (index * 2 + 0) / forCount, Math.PI * (index * 2 + 1) / forCount);
+    drawFilledCircle(radius, "rgb(5,5,5)", Math.PI * (index * 2 + 1) / forCount, Math.PI * (index * 2 + 2) / forCount);
   }
 };
 
