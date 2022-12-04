@@ -104,11 +104,12 @@ const drawSolarSystem = () => {
 
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
 
+  // 惑星図形
+  drawPlanetsView([Mercury, Venus, Earth, Mars, Jupiter, Saturn], props.dayCount, 'rgba(128,128,128,0.5)');
   // 背景
+  drawBackGround(Earth.radiusRatio * canvasScale.value / 2);
   // 春分線
   drawVernalEquinox();
-  // 惑星図形
-  drawPlanetsView([Mercury, Venus, Earth, Mars, Jupiter, Saturn], props.dayCount, 'rgba(50,50,50,0.5)');
 
 
   // 惑星
@@ -138,12 +139,20 @@ const drawSolarSystem = () => {
 };
 
 // 背景
-const drawBackGround = (radius: number) => {
-  const forCount = 2
-  for (let index = 0; index < forCount; index++) {
-    drawFilledCircle(radius, "rgba(20,20,20,1)", Math.PI * (index * 2 + 0) / forCount, Math.PI * (index * 2 + 1) / forCount);
-    drawFilledCircle(radius, "rgba(10,10,10,1)", Math.PI * (index * 2 + 1) / forCount, Math.PI * (index * 2 + 2) / forCount);
-  }
+const drawBackGround = (radius: number, fillColor = 'rgba(0,0,0, 0.5)') => {
+  if (ctx.value === null) return;
+  ctx.value.beginPath();
+  ctx.value.moveTo(centerCoordinate.value.x, centerCoordinate.value.y);
+  ctx.value.arc(
+    centerCoordinate.value.x,
+    centerCoordinate.value.y,
+    radius,
+    0,
+    Math.PI * 2
+  );
+  ctx.value.fillStyle = fillColor;
+  ctx.value.fill();
+
 };
 
 // 恒星を描画
@@ -285,7 +294,7 @@ const planetRectangularCoordinate = (
 }
 
 // 惑星の位置同士を結ぶ図形
-const drawPlanetsView = (planets: Planet[], days: number, fillColor: string = 'rgba(100,100,100,0.3)') => {
+const drawPlanetsView = (planets: Planet[], days: number, fillColor: string = 'rgba(128,128,128,0.8)') => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
   for (let i = 0; i < planets.length; i++) {
