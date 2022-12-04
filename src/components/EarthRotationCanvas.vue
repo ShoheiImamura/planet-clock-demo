@@ -21,7 +21,7 @@ type Coordinate = {
 };
 
 const ctx = ref<CanvasRenderingContext2D | null>(null);
-const canvasScale = ref(150);
+const canvasScale = ref(120);
 const centerCoordinate = ref<Coordinate>({
   x: canvasScale.value,
   y: canvasScale.value,
@@ -41,8 +41,8 @@ onMounted(() => {
 const drawEarthRotation = () => {
   if (ctx.value === null) return;
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
-  drawBackGround(140);
-  drawEarth(Earth, props.dayCount, 75);
+  drawBackGround(canvasScale.value - 10);
+  drawEarth(Earth, props.dayCount, canvasScale.value / 2);
   drawSun(Earth, props.dayCount, 3);
   drawLineSunToEarth(Earth, props.dayCount);
   drawPlace(3, Earth, props.dayCount, props.dayUnixTimeCount);
@@ -87,7 +87,7 @@ const drawPlace = (radius: number, earth: typeof Earth, days: number, time: numb
   const placeAngle = Math.PI * 2 * (time / (60 * 60 * 24));// 場所の相対角度
   const { x, y } = getXYByRadians(
     placeAngle - earthAngle,
-    75
+    canvasScale.value / 2
   );
   ctx.value.arc(
     centerCoordinate.value.x + x,
@@ -113,7 +113,7 @@ const drawPlaceLine = (radius: number, earth: typeof Earth, days: number, time: 
   ctx.value.arc(
     centerCoordinate.value.x,
     centerCoordinate.value.y,
-    75,
+    canvasScale.value / 2,
     (-1) * (placeAngle - earthAngle),
     (-1) * (placeAngle - earthAngle),
   );
@@ -210,7 +210,7 @@ const drawLineSunToEarth = (
   ctx.value.arc(
     centerCoordinate.value.x,
     centerCoordinate.value.y,
-    75,
+    canvasScale.value / 2,
     (-1) * (sunAngle + Math.PI),
     (-1) * (sunAngle + Math.PI),
   )
@@ -229,26 +229,26 @@ const moonCoordinate = ref({
 const setMoonCoordinate = (
   moon: Moon,
   days: number = 0,
+  radius: number = canvasScale.value * 4 / 5
 ) => {
 
   // 位置を導出
   const { x, y } = getXYByRadians(
     moon.angle(dayToYear(days)),
-    120
+    radius
   );
   moonCoordinate.value = {
     x: centerCoordinate.value.x + x, y: centerCoordinate.value.y + y
   }
-  console.log({ x, y })
 }
 // 月の描画
-const drawMoon = () => {
+const drawMoon = (distance: number = canvasScale.value * 4 / 5) => {
   const moon = TheMoon;
   const year = dayToYear(props.dayCount);
   const radius = canvasScale.value * 2 / 30;
   const angle = moon.angle(year) - moon.planet.angle(year)
 
-  setMoonCoordinate(moon, props.dayCount)
+  setMoonCoordinate(moon, props.dayCount, distance)
 
   drawCircle(radius);
   if (Math.sin(angle) >= 0 && Math.cos(angle) >= 0) {

@@ -26,7 +26,7 @@ const dayUnixTimeCount = () => {
 const countedDateTime = () => { return fromUnixTime(baseUnixTime + unixTimeCount.value) };
 
 // 早送り
-const beatSpeed = ref(360); // 1秒間の count 回数
+const beatSpeed = ref(60); // 1秒間の count 回数
 const timePerCount = ref(1); // 1カウントごとに進めるunixtime
 const incrementTime = () => {
   if (mode.value === 'auto_increment') {

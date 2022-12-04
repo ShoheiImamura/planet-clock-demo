@@ -19,7 +19,7 @@ type Coordinate = {
 };
 
 const ctx = ref<CanvasRenderingContext2D | null>(null);
-const canvasScale = ref(150);
+const canvasScale = ref(120);
 const centerCoordinate = ref<Coordinate>({
   x: canvasScale.value,
   y: canvasScale.value,
@@ -88,34 +88,30 @@ const drawSolarSystem = () => {
 
   // 背景
   drawBackGround(canvasScale.value);
+  // 惑星図形
+  drawPlanetsView([Mercury, Venus, Earth, Mars, Jupiter, Saturn], props.dayCount, 'rgba(50,50,50,0.5)');
 
   // 惑星
   // 土星
-  // drawLineStarToPlanet(Saturn, props.dayCount);
   drawPlanet(Saturn, props.dayCount, Saturn.size);
   // 木星
-  // drawLineStarToPlanet(Jupiter, props.dayCount);
   drawPlanet(Jupiter, props.dayCount, Jupiter.size);
   // 火星
-  // drawLineStarToPlanet(Mars, props.dayCount);
   drawPlanet(Mars, props.dayCount, Mars.size);
   // 地球
   drawPlanetaryOrbit(Earth);
-  drawLineStarToPlanet(Earth, props.dayCount);
+  drawLineStarToPlanet(Earth, props.dayCount, 'rgba(255,255,255,1)', 1.5);
   drawPlanet(Earth, props.dayCount, Earth.size);
   // 金星
-  drawLineStarToPlanet(Venus, props.dayCount);
   drawPlanet(Venus, props.dayCount, Venus.size);
   // 水星
-  drawLineStarToPlanet(Mercury, props.dayCount);
   drawPlanet(Mercury, props.dayCount, Mercury.size);
 
   // 太陽（恒星）
-  drawStar(3);
 
   // 月（衛星）
-  drawMoonOrbit(TheMoon, props.dayCount);
   drawMoon(TheMoon, props.dayCount);
+
 };
 
 // 背景
@@ -141,18 +137,8 @@ const drawPlanet = (
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
-  // 位置を導出
-  const { x, y } = getXYByRadians(
-    planet.angle(dayToYear(days)),
-    planet.radiusRatio * canvasScale.value / 2
-  );
-  ctx.value.arc(
-    centerCoordinate.value.x + x,
-    centerCoordinate.value.y + y,
-    planetRadius,
-    0,
-    Math.PI * 2
-  );
+  const { x, y } = planetRectangularCoordinate(planet, days,);
+  ctx.value.arc(x, y, planetRadius, 0, Math.PI * 2);
 
   ctx.value.fillStyle = fillColor;
   ctx.value.fill();
@@ -204,7 +190,7 @@ const drawLineStarToPlanet = (
   planet: Planet,
   days: number = 0,
   lineColor: string = "rgba(255,255,255, 0.5)", // 扇形の色
-  lineWidth: number = 1 // 扇形の色
+  lineWidth: number = 2 // 扇形の色
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
@@ -232,20 +218,10 @@ const drawMoonOrbit = (
 ) => {
   if (ctx.value === null) return;
   // 惑星の位置を導出
-  const { x, y } = getXYByRadians(
-    moon.planet.angle(dayToYear(days)),
-    moon.planet.radiusRatio * canvasScale.value / 2
-  );
+  const { x, y } = planetRectangularCoordinate(moon.planet, days);
   ctx.value.beginPath();
   ctx.value.strokeStyle = lineColor;
-  ctx.value.arc(
-    centerCoordinate.value.x + x,
-    centerCoordinate.value.y + y,
-    moon.radiusRatio * canvasScale.value / 2,
-    0,
-    2 * Math.PI,
-    true
-  );
+  ctx.value.arc(x, y, moon.radiusRatio * canvasScale.value / 2, 0, 2 * Math.PI, true);
   ctx.value.stroke();
   ctx.value.closePath();
 };
@@ -257,28 +233,45 @@ const drawMoon = (
   fillColor: string = "rgba(255,255,200,0.9)"
 ) => {
   if (ctx.value === null) return;
-  // 惑星の位置を導出
-  const { x: planetX, y: planetY } = getXYByRadians(
-    moon.planet.angle(dayToYear(days)),
-    moon.planet.radiusRatio * canvasScale.value / 2
-  );
-  ctx.value.beginPath();
-  // 位置を導出
+  // 惑星の描画位置を導出
+  const { x: planetX, y: planetY } = planetRectangularCoordinate(moon.planet, days);
+  // 衛星の相対位置を導出
   const { x, y } = getXYByRadians(
     moon.angle(dayToYear(days)),
     moon.radiusRatio * canvasScale.value / 2
   );
-  ctx.value.arc(
-    centerCoordinate.value.x + planetX + x,
-    centerCoordinate.value.y + planetY + y,
-    2,
-    0,
-    Math.PI * 2
-  );
-
+  ctx.value.beginPath();
+  ctx.value.arc(planetX + x, planetY + y, 2, 0, Math.PI * 2);
   ctx.value.fillStyle = fillColor;
   ctx.value.fill();
 };
+
+// 惑星の直交座標
+const planetRectangularCoordinate = (
+  planet: Planet,
+  days: number,
+  center: Coordinate = { x: canvasScale.value, y: canvasScale.value }
+): Coordinate => {
+  // 位置を導出
+  const { x, y } = getXYByRadians(
+    planet.angle(dayToYear(days)),
+    planet.radiusRatio * canvasScale.value / 2
+  );
+  return { x: center.x + x, y: center.y + y }
+}
+
+// 惑星の位置同士を結ぶ図形
+const drawPlanetsView = (planets: Planet[], days: number, fillColor: string = 'rgba(100,100,100,0.3)') => {
+  if (ctx.value === null) return;
+  ctx.value.beginPath();
+  for (let i = 0; i < planets.length; i++) {
+    const { x, y } = planetRectangularCoordinate(planets[i], days);
+    ctx.value.lineTo(x, y);
+  }
+  ctx.value.closePath();
+  ctx.value.fillStyle = fillColor;
+  ctx.value.fill();
+}
 
 </script>
 

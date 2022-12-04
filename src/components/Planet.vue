@@ -34,7 +34,7 @@ export const planet = () => {
   const Mercury: Planet = {
     radiusRatio: 0.39,
     japaneseName: "水星",
-    size: 3,
+    size: 1,
     orbitalPeriod: 0.24,
     angularVelocity: Math.PI * 2 * (1 / 0.24),
     angle: (year: number) => { return 0 + Mercury.angularVelocity * year },
@@ -44,7 +44,7 @@ export const planet = () => {
   const Venus: Planet = {
     radiusRatio: 0.72,
     japaneseName: "金星",
-    size: 3,
+    size: 1,
     orbitalPeriod: 0.62,
     angularVelocity: Math.PI * 2 * (1 / 0.62),
     angle: (year: number) => { return 0 + Venus.angularVelocity * year },
@@ -64,7 +64,7 @@ export const planet = () => {
   const Mars: Planet = {
     radiusRatio: 1.52,
     japaneseName: "火星",
-    size: 3,
+    size: 1,
     orbitalPeriod: 1.88,
     angularVelocity: Math.PI * 2 * (1 / 1.88),
     angle: (year: number) => { return 0 + Mars.angularVelocity * year },
@@ -74,7 +74,7 @@ export const planet = () => {
   const Jupiter: Planet = {
     radiusRatio: 1.70,
     japaneseName: "木星",
-    size: 4,
+    size: 1,
     orbitalPeriod: 11.8,
     angularVelocity: Math.PI * 2 * (1 / 11.8),
     angle: (year: number) => { return 0 + Jupiter.angularVelocity * year },
@@ -83,7 +83,7 @@ export const planet = () => {
   const Saturn: Planet = {
     radiusRatio: 1.80,
     japaneseName: "土星",
-    size: 3,
+    size: 1,
     orbitalPeriod: 29.4,
     angularVelocity: Math.PI * 2 * (1 / 29.4),
     angle: (year: number) => { return 0 + Saturn.angularVelocity * year },
@@ -92,7 +92,7 @@ export const planet = () => {
   const Uranus: Planet = {
     radiusRatio: 1.90,
     japaneseName: "天王星",
-    size: 3,
+    size: 1,
     orbitalPeriod: 84.0,
     angularVelocity: Math.PI * 2 * (1 / 84.0),
     angle: (year: number) => { return 0 + Uranus.angularVelocity * year },
@@ -101,7 +101,7 @@ export const planet = () => {
   const Neptune: Planet = {
     radiusRatio: 2.00,
     japaneseName: "海王星",
-    size: 3,
+    size: 1,
     orbitalPeriod: 164,
     angularVelocity: Math.PI * 2 * (1 / 164),
     angle: (year: number) => { return 0 + Neptune.angularVelocity * year },
