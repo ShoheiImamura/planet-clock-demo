@@ -69,15 +69,6 @@ const getXYByRadians = (radians: number, radius: number): Coordinate => {
     y: y,
   };
 };
-const planetList = [
-  // Uranus,
-  // Saturn,
-  Jupiter,
-  Mars,
-  Earth,
-  Venus,
-  Mercury
-];
 
 // 惑星会合
 const eventPlanetaryConjunction = (planetList: Planet[], year: number) => {
@@ -108,8 +99,8 @@ const drawPlanetaryConjunction = (planetList: Planet[], days: number) => {
         return planet == planetaryConjunction.planet1 || planet == planetaryConjunction.planet2
       });
       if (isConjanction) {
-        drawLineStarToPlanet(planet, days, 'rgba(100,255,255,0.5)', 2);
-        drawPlanet(planet, days, 4, 'rgba(100,255,255,0.5)');
+        drawLineStarToPlanet(planet, days, 'rgba(0,255,255,0.5)', 2);
+        drawPlanet(planet, days, 3, 'rgba(0,255,255,0.5)');
       }
     });
   }
@@ -123,11 +114,11 @@ const drawSolarSystem = () => {
   drawBackGround(canvasScale.value, 'black');
 
   // 惑星図形
-  drawPlanetsView([Mercury, Venus, Earth, Mars, Jupiter, Saturn], props.dayCount, 'rgba(128,128,128,0.5)');
+  drawPlanetsView([Mercury, Venus, Earth, Mars, Jupiter, Saturn], props.dayCount, 'rgba(255,255,255,0.75)');
   // 地球の背景
-  drawBackGround(Earth.radiusRatio * canvasScale.value / 2);
+  drawBackGround(Earth.radiusRatio * canvasScale.value / 2, 'rgba(0,0,0,0.6)');
   // 春分線
-  drawVernalEquinox();
+  drawVernalEquinox('rgba(255,255,255,0.75)');
 
 
   // 惑星
@@ -138,9 +129,10 @@ const drawSolarSystem = () => {
   // 火星
   drawPlanet(Mars, props.dayCount, Mars.size);
   // 地球
-  drawPlanetaryOrbit(Earth, 'rgba(100,100,100,0.5)');
-  drawLineStarToPlanet(Earth, props.dayCount, 'rgba(255,0,0,1)', 2);
-  drawPlanet(Earth, props.dayCount, Earth.size, 'rgba(255,0,0,1)');
+  drawPlanetaryOrbit(Earth, 'rgba(255,255,255,0.75)');
+  drawLineStarToPlanet(Earth, props.dayCount, 'rgba(255,0,0,1)', 3);
+  drawPlanet(Earth, props.dayCount, 5, 'rgba(255,255,255,1)');
+  drawPlanet(Earth, props.dayCount, 3, 'rgba(0,0,0,1)');
   // 金星
   drawPlanet(Venus, props.dayCount, Venus.size);
   // 水星
@@ -312,7 +304,7 @@ const planetRectangularCoordinate = (
 }
 
 // 惑星の位置同士を結ぶ図形
-const drawPlanetsView = (planets: Planet[], days: number, fillColor: string = 'rgba(128,128,128,0.8)') => {
+const drawPlanetsView = (planets: Planet[], days: number, fillColor: string = 'rgba(255,255,255,0.8)') => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
   for (let i = 0; i < planets.length; i++) {
@@ -325,11 +317,11 @@ const drawPlanetsView = (planets: Planet[], days: number, fillColor: string = 'r
 }
 
 // 春分線
-const drawVernalEquinox = () => {
+const drawVernalEquinox = (lineColor: string = 'rgba(255,255,255,0.8)') => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
   ctx.value.lineWidth = 2;
-  ctx.value.strokeStyle = 'rgba(255,255,255,0.8)';
+  ctx.value.strokeStyle = lineColor;
 
   ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
   ctx.value.lineTo(centerCoordinate().x + Earth.radiusRatio * canvasScale.value / 2, centerCoordinate().y)

@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from "vue";
 import SolarSystemCanvas from "./SolarSystemCanvas.vue";
 import EarthRotationCanvas from "./EarthRotationCanvas.vue";
-import { getUnixTime, fromUnixTime, getYear, getDate, getSeconds, getMonth, getHours, getMinutes, getDayOfYear } from "date-fns";
+import { getUnixTime, fromUnixTime, getYear, getHours, getMinutes, getDayOfYear } from "date-fns";
 import { format as formatTZ } from 'date-fns-tz';
 
 defineProps({
@@ -30,7 +30,7 @@ const beatSpeed = ref(60); // 1秒間の count 回数
 const timePerCount = ref(1); // 1カウントごとに進めるunixtime
 const incrementTime = () => {
   if (mode.value === 'auto_increment') {
-    unixTimeCount.value += timePerCount.value;
+    unixTimeCount.value += Number(timePerCount.value);
   }
 }
 
@@ -181,15 +181,15 @@ const earthRotationCanvasDiv = ref();
         hide-details></v-slider>
     </v-card>
     <!-- 早送り時 -->
-    <v-card v-if="mode == 'auto_increment'" class="ma-2 d-flex justify-center align-center">
-      <v-btn-toggle v-model="timePerCount">
+    <v-card v-if="mode === 'auto_increment'" class="ma-2 d-flex justify-center align-center">
+      <v-btn-toggle v-model="timePerCount" mandatory>
         <v-btn :value="0">
           <v-icon>mdi-stop</v-icon>
         </v-btn>
-        <v-btn :value="(1)">
+        <v-btn :value="1">
           <v-icon>mdi-play</v-icon>
         </v-btn>
-        <v-btn :value="(60)">
+        <v-btn :value="60">
           <v-icon>mdi-fast-forward</v-icon>
         </v-btn>
         <v-btn :value="(60 * 60)">

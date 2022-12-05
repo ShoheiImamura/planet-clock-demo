@@ -58,10 +58,12 @@ const drawEarthRotation = () => {
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
   drawBackGround(canvasScale.value); // 全体背景
   drawEarth(Earth, props.dayCount, canvasScale.value / 2);
-  drawSun(Earth, props.dayCount, 3);
-  drawLineSunToEarth(Earth, props.dayCount, 'rgba(255,255,255,0.8)', 2);
-  drawPlace(2, Earth, props.dayCount, props.dayUnixTimeCount);
-  drawPlaceLine(3, Earth, props.dayCount, props.dayUnixTimeCount);
+  drawSun(Earth, props.dayCount, 2, 'rgba(255,0,0,1)');
+  drawLineSunToEarth(Earth, props.dayCount, 'rgba(255,0,0,0.8)', 2);
+  drawPlanetSurface(canvasScale.value / 2, 'rgba(255,255,255,0.8)');
+  drawPlaceLine(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,0.8)');
+  drawPlace(6, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,0.8)');
+  drawPlace(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(0,0,0,1)');
   drawMoon();
 }
 
@@ -89,8 +91,8 @@ const drawBackGround = (radius: number) => {
 const drawEarth = (earth: typeof Earth, days: number, radius: number) => {
   const angle = (-1) * earth.angle(dayToYear(days));
   const halfPI = Math.PI * 0.5;
-  drawFilledCircle(radius, "rgb(20,20,20)", (angle - halfPI), (angle + halfPI));
-  drawFilledCircle(radius, "rgb(50,50,50)", (angle + halfPI), (angle + halfPI * 3));
+  drawFilledCircle(radius, "rgb(255,255,255,0)", (angle - halfPI), (angle + halfPI));
+  drawFilledCircle(radius, "rgba(255,255,255,0.375)", (angle + halfPI), (angle + halfPI * 3));
 };
 
 // 地点を描画
@@ -118,7 +120,7 @@ const drawPlace = (radius: number, earth: typeof Earth, days: number, time: numb
 
 
 // 地点までの線
-const drawPlaceLine = (radius: number, earth: typeof Earth, days: number, time: number, lineColor: string = 'rgba(255,0,0,1)') => {
+const drawPlaceLine = (radius: number, earth: typeof Earth, days: number, time: number, lineColor: string = 'rgba(255,0,0,1)', lineWidth: number = 3) => {
   if (ctx.value === null) return;
   // 位置を導出
   const earthAngle = (-1) * earth.angle(dayToYear(days)) // 地球の角度
@@ -128,7 +130,7 @@ const drawPlaceLine = (radius: number, earth: typeof Earth, days: number, time: 
     canvasScale.value / 2
   );
   ctx.value.strokeStyle = lineColor;
-  ctx.value.lineWidth = 2;
+  ctx.value.lineWidth = lineWidth;
   ctx.value.beginPath();
   ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
   ctx.value.lineTo(centerCoordinate().x + x, centerCoordinate().y + y);
@@ -142,7 +144,7 @@ const drawSun = (
   earth: typeof Earth,
   days: number = 0, // 基準日からの日数
   StarRadius: number = 3,
-  fillColor: string = "rgba(255,255,200,0.9)",
+  strokeColor: string = "rgba(255,255,255,0.9)",
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
@@ -159,7 +161,7 @@ const drawSun = (
     Math.PI * 2
   );
 
-  ctx.value.strokeStyle = 'white';
+  ctx.value.strokeStyle = strokeColor;
   ctx.value.stroke();
   ctx.value.closePath();
 };
@@ -186,21 +188,17 @@ const drawFilledCircle = (
   ctx.value.fill();
 };
 
-// 惑星軌道を描画
-const drawPlanetaryOrbit = (
-  planet: Planet,
-  lineColor: string = "rgba(130,130,130,0.6)" // 軌道の色
+// 地球の枠
+const drawPlanetSurface = (
+  radius: number,
+  lineColor: string = "rgba(255,255,255,0.6)", // 軌道の色
+  lineWidth: number = 3
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
   ctx.value.strokeStyle = lineColor;
-  ctx.value.arc(
-    centerCoordinate().x,
-    centerCoordinate().y,
-    planet.radiusRatio * canvasScale.value / 2,
-    0,
-    2 * Math.PI
-  );
+  ctx.value.lineWidth = lineWidth;
+  ctx.value.arc(centerCoordinate().x, centerCoordinate().y, radius, 0, 2 * Math.PI);
   ctx.value.stroke();
   ctx.value.closePath();
 };
@@ -304,7 +302,7 @@ const drawCircle = (
 const drawSemicirlce = (
   radius: number,
   rotation: number,
-  fillColor: string = "beige",
+  fillColor: string = "rgba(255,255,255,1)",
   startAngle: number = 0,
   endAngle: number = Math.PI * 1
 ) => {
