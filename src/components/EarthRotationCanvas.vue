@@ -34,7 +34,6 @@ const centerCoordinate = (): Coordinate => {
 };
 const { divWidth } = toRefs(props)
 watch(divWidth, () => {
-  console.log(divWidth.value)
   if (divWidth.value < 300) {
     canvasScale.value = divWidth.value / 2
   } else {
@@ -90,9 +89,8 @@ const drawBackGround = (radius: number) => {
 // 地球を描画
 const drawEarth = (earth: typeof Earth, days: number, radius: number) => {
   const angle = (-1) * earth.angle(dayToYear(days));
-  const halfPI = Math.PI * 0.5;
-  drawFilledCircle(radius, "rgb(0,0,0,1)", 0, (Math.PI));
-  drawFilledCircle(radius, "rgba(175,175,175,1)", (Math.PI), 0);
+  drawFilledCircle(radius, "rgb(0,0,0,1)", - (Math.PI) / 2, (Math.PI) / 2);
+  drawFilledCircle(radius, "rgba(175,175,175,1)", (Math.PI) / 2, - (Math.PI) / 2);
   if (ctx.value === null) return;
   ctx.value.beginPath();
   // 春分~秋分
@@ -102,7 +100,7 @@ const drawEarth = (earth: typeof Earth, days: number, radius: number) => {
       centerCoordinate().y,
       canvasScale.value / 2,
       (-1) * canvasScale.value / 2 * Math.sin(angle) * 23.4 / 90, // 地軸のズレ分ずらす
-      0,
+      - Math.PI / 2,
       // 0,
       0,
       Math.PI
@@ -114,7 +112,7 @@ const drawEarth = (earth: typeof Earth, days: number, radius: number) => {
       centerCoordinate().y,
       canvasScale.value / 2,
       canvasScale.value / 2 * Math.sin(angle) * 23.4 / 90,
-      0,
+      - Math.PI / 2,
       // 0,
       Math.PI,
       0
@@ -133,7 +131,7 @@ const drawPlace = (radius: number, earth: typeof Earth, days: number, time: numb
   const earthAngle = (-1) * earth.angle(dayToYear(days)) // 地球の角度
   const placeAngle = Math.PI * 2 * (time / (60 * 60 * 24));// 場所の相対角度
   const { x, y } = getXYByRadians(
-    placeAngle - Math.PI / 2, // 冬至の位置に調整
+    placeAngle, // 右位置に調整
     canvasScale.value / 2 * Math.cos(Math.PI * 35 / 180), // 緯度調整
   );
   ctx.value.arc(
@@ -156,7 +154,7 @@ const drawPlaceLine = (radius: number, earth: typeof Earth, days: number, time: 
   const earthAngle = (-1) * earth.angle(dayToYear(days)) // 地球の角度
   const placeAngle = Math.PI * 2 * (time / (60 * 60 * 24));// 場所の相対角度
   const { x, y } = getXYByRadians(
-    placeAngle - Math.PI / 2, // 冬至の位置に調整
+    placeAngle, // 右の位置に調整
     canvasScale.value / 2
   );
   ctx.value.strokeStyle = lineColor;
@@ -180,7 +178,7 @@ const drawSun = (
   ctx.value.beginPath();
   // 位置を導出
   const { x, y } = getXYByRadians(
-    Math.PI / 2, // 真上に調整
+    Math.PI, // 左に調整
     1.9 * canvasScale.value / 2
   );
   ctx.value.arc(
@@ -248,8 +246,8 @@ const drawLineSunToEarth = (
     centerCoordinate().x,
     centerCoordinate().y,
     canvasScale.value / 2,
-    (Math.PI * 1 / 2),
-    (Math.PI * 1 / 2),
+    0,
+    0,
   )
   ctx.value.stroke();
   ctx.value.closePath();
@@ -272,7 +270,7 @@ const setMoonCoordinate = (
   // 位置を導出
   const earthAngle = (-1) * moon.planet.angle(dayToYear(days)) // 地球の角度
   const { x, y } = getXYByRadians(
-    moon.angle(dayToYear(days)) - earthAngle - Math.PI * 1 / 2,
+    moon.angle(dayToYear(days)) - earthAngle,
     radius
   );
   moonCoordinate.value = {

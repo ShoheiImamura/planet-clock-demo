@@ -5,6 +5,7 @@ import EarthRotationCanvas from "./EarthRotationCanvas.vue";
 import { getUnixTime, fromUnixTime, getYear, getHours, getMinutes, getDayOfYear } from "date-fns";
 import { format as formatTZ } from 'date-fns-tz';
 
+
 defineProps({
   msg: String,
   displayMenu: {

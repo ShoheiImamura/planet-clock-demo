@@ -33,7 +33,6 @@ const centerCoordinate = (): Coordinate => {
 };
 const { divWidth } = toRefs(props)
 watch(divWidth, () => {
-  console.log(divWidth.value)
   if (divWidth.value < 300) {
     canvasScale.value = divWidth.value / 2
   } else {
