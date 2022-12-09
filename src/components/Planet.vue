@@ -116,7 +116,7 @@ export const planet = () => {
     orbitalPeriod: 0.075,
     angularVelocity: Math.PI * 2 * (1 / 0.075),
     angle: (year: number) => { return 0 + TheMoon.angularVelocity * year },
-    relativeAngle: (year: number) => { return TheMoon.angle(year) - TheMoon.planet.angle(year) }
+    relativeAngle: (year: number) => { return TheMoon.angle(year) - TheMoon.planet.angle(year) },
   };
   return {
     // 惑星（Planet）
@@ -132,6 +132,7 @@ export const planet = () => {
     TheMoon,
   };
 };
+export const theMoonOrbitalPeriodUnixTime = (60 * 60 * 24 * 365.25) / ((1 / 0.075) - 1);
 
 export default {};
 </script>

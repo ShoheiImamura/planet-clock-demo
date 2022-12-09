@@ -231,7 +231,7 @@ const drawPlanetSurface = (
   ctx.value.closePath();
 };
 
-// 0 時ライン
+// 12 時ライン
 const drawLineSunToEarth = (
 
   lineColor: string = "rgba(255,255,255, 0.9)", // 線の色
@@ -246,8 +246,8 @@ const drawLineSunToEarth = (
     centerCoordinate().x,
     centerCoordinate().y,
     canvasScale.value / 2,
-    0,
-    0,
+    Math.PI,
+    Math.PI,
   )
   ctx.value.stroke();
   ctx.value.closePath();
@@ -310,26 +310,26 @@ const drawMoon = (distance: number = canvasScale.value * 0.9) => {
   drawCircle(radius);
   if (Math.sin(angle) >= 0 && Math.cos(angle) >= 0) {
     // 満月 -> 下弦
-    drawSemicirlce(radius, - angle, Math.PI, 0, 'rgba(255,255,50,1)');
-    drawEllipse(radius, radius * Math.cos(angle), 'rgba(255,255,50,1)', -angle);
+    drawSemicirlce(radius, - angle, Math.PI, 0, 'rgba(255,255,175,1)');
+    drawEllipse(radius, radius * Math.cos(angle), 'rgba(255,255,175,1)', -angle);
   } else if (Math.sin(angle) >= 0 && Math.cos(angle) < 0) {
     // 下弦 -> 新月
-    drawSemicirlce(radius, - angle, Math.PI, 0, 'rgba(255,255,50,1)');
-    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'rgba(50,50,50,1)', -angle);
+    drawSemicirlce(radius, - angle, Math.PI, 0, 'rgba(255,255,175,1)');
+    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'rgba(75,75,75,1)', -angle);
   } else if (Math.sin(angle) < 0 && Math.cos(angle) < 0) {
     // 新月 -> 上弦
-    drawSemicirlce(radius, - angle, 0, Math.PI, 'rgba(255,255,50,1)');
-    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'rgba(50,50,50,1)', -angle);
+    drawSemicirlce(radius, - angle, 0, Math.PI, 'rgba(255,255,175,1)');
+    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'rgba(75,75,75,1)', -angle);
   } else {
     // 上弦 -> 満月
-    drawSemicirlce(radius, - angle, 0, Math.PI, 'rgba(255,255,50,1)');
-    drawEllipse(radius, radius * Math.cos(angle), 'rgba(255,255,50,1)', -angle);
+    drawSemicirlce(radius, - angle, 0, Math.PI, 'rgba(255,255,175,1)');
+    drawEllipse(radius, radius * Math.cos(angle), 'rgba(255,255,175,1)', -angle);
   }
 }
 // そのままの月
 const drawCircle = (
   radius: number,
-  fillColor: string = "#212121",
+  fillColor: string = 'rgba(75,75,75,1)',
   startAngle: number = 0,
   endAngle: number = Math.PI * 2
 ) => {

@@ -4,6 +4,7 @@ import SolarSystemCanvas from "./SolarSystemCanvas.vue";
 import EarthRotationCanvas from "./EarthRotationCanvas.vue";
 import { getUnixTime, fromUnixTime, getYear, getHours, getMinutes, getDayOfYear } from "date-fns";
 import { format as formatTZ } from 'date-fns-tz';
+import { theMoonOrbitalPeriodUnixTime } from './Planet.vue';
 
 
 defineProps({
@@ -25,6 +26,19 @@ const dayUnixTimeCount = () => {
 }; // 一日の中の経過unixtime
 
 const countedDateTime = () => { return fromUnixTime(baseUnixTime + unixTimeCount.value) };
+
+// 月の満ち欠けカウント
+const moonUnixTimeBase = ref({
+  base: 0, // 基準値
+  enough: 0, // あまり
+});
+const getMoonUnixTime = () => {
+  moonUnixTimeBase.value.base = Math.floor(unixTimeCount.value / theMoonOrbitalPeriodUnixTime);
+  moonUnixTimeBase.value.enough = unixTimeCount.value % theMoonOrbitalPeriodUnixTime;
+}
+const setMoonUnixTime = () => {
+  unixTimeCount.value = moonUnixTimeBase.value.base * theMoonOrbitalPeriodUnixTime + moonUnixTimeBase.value.enough
+}
 
 // 早送り
 const beatSpeed = ref(60); // 1秒間の count 回数
@@ -113,6 +127,11 @@ watch(mode, () => {
 // 操作時変更検知
 watch(manualDateTime, () => {
   setManualDateTime();
+  getMoonUnixTime();
+}, { deep: true })
+watch(moonUnixTimeBase, () => {
+  setMoonUnixTime();
+  setTimeToManualDateTime();
 }, { deep: true })
 
 // 表示用（年月日）
@@ -177,6 +196,8 @@ const earthRotationCanvasDiv = ref();
       <v-slider v-model="manualDateTime.year" min="1900" max="2200" density="compact" label="years"
         hide-details></v-slider>
       <v-slider v-model="manualDateTime.day" min="80" max="445" density="compact" label=" / year"
+        hide-details></v-slider>
+      <v-slider v-model="moonUnixTimeBase.enough" min="1" max="2558605" density="compact" label=" / month"
         hide-details></v-slider>
       <v-slider v-model="manualDateTime.minute" min="0" max="1440" density="compact" label=" / day"
         hide-details></v-slider>
