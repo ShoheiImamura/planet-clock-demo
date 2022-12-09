@@ -26,6 +26,8 @@ export type Moon = {
   angularVelocity: number;
   /** year 時間経過後の角度位置(ラジアン) */
   angle: (year: number) => number,
+  /** year 時間経過後の相対角度位置(ラジアン) */
+  relativeAngle: (year: number) => number,
 };
 
 
@@ -114,6 +116,7 @@ export const planet = () => {
     orbitalPeriod: 0.075,
     angularVelocity: Math.PI * 2 * (1 / 0.075),
     angle: (year: number) => { return 0 + TheMoon.angularVelocity * year },
+    relativeAngle: (year: number) => { return TheMoon.angle(year) - TheMoon.planet.angle(year) }
   };
   return {
     // 惑星（Planet）

@@ -57,12 +57,12 @@ const drawEarthRotation = () => {
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
   drawBackGround(canvasScale.value); // 全体背景
   drawEarth(Earth, props.dayCount, canvasScale.value / 2);
-  drawSun(Earth, props.dayCount, 2, 'rgba(255,0,0,1)');
   drawLineSunToEarth('rgba(255,0,0,0.8)', 2);
   drawPlanetSurface(canvasScale.value / 2, 'rgba(255,255,255,0.8)');
   drawPlaceLine(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,0.8)');
   drawPlace(6, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,0.8)');
   drawPlace(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(0,0,0,1)');
+  drawMoonLine();
   drawMoon();
 }
 
@@ -264,45 +264,66 @@ const moonCoordinate = ref({
 const setMoonCoordinate = (
   moon: Moon,
   days: number = 0,
-  radius: number = canvasScale.value * 4 / 5
+  radius: number = canvasScale.value * 0.9
 ) => {
 
   // 位置を導出
-  const earthAngle = (-1) * moon.planet.angle(dayToYear(days)) // 地球の角度
   const { x, y } = getXYByRadians(
-    moon.angle(dayToYear(days)) - earthAngle,
+    moon.relativeAngle(dayToYear(days)),
     radius
   );
   moonCoordinate.value = {
     x: centerCoordinate().x + x, y: centerCoordinate().y + y
   }
 }
-// 月の描画
-const drawMoon = (distance: number = canvasScale.value * 4 / 5) => {
+// 中心から月までの線
+const drawMoonLine = (distance: number = canvasScale.value * 0.9, lineWidth: number = 2, lineColor: string = 'rgba(255,255,255,1)') => {
   const moon = TheMoon;
   const year = dayToYear(props.dayCount);
   const radius = canvasScale.value * 2 / 30;
-  const angle = moon.angle(year) + moon.planet.angle(year)
+  const angle = moon.relativeAngle(year)
 
+  if (ctx.value === null) return;
+  ctx.value.beginPath();
+  ctx.value.lineWidth = lineWidth;
+  ctx.value.strokeStyle = lineColor;
+  ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
+  ctx.value.arc(
+    centerCoordinate().x,
+    centerCoordinate().y,
+    distance,
+    - angle,
+    - angle,
+    false,
+  )
+  ctx.value.stroke();
+  ctx.value.closePath();
+  ctx.value.lineWidth = 1; // reset
+}
+// 月の描画
+const drawMoon = (distance: number = canvasScale.value * 0.9) => {
+  const moon = TheMoon;
+  const year = dayToYear(props.dayCount);
+  const radius = canvasScale.value * 2 / 30;
+  const angle = moon.relativeAngle(year)
   setMoonCoordinate(moon, props.dayCount, distance)
-
   drawCircle(radius);
   if (Math.sin(angle) >= 0 && Math.cos(angle) >= 0) {
     // 満月 -> 下弦
-    drawSemicirlce(radius, Math.PI * 1 / 2);
-    drawEllipse(radius, radius * Math.cos(angle));
+    drawSemicirlce(radius, - angle, Math.PI, 0, 'rgba(255,255,50,1)');
+    drawEllipse(radius, radius * Math.cos(angle), 'rgba(255,255,50,1)', -angle);
   } else if (Math.sin(angle) >= 0 && Math.cos(angle) < 0) {
     // 下弦 -> 新月
-    drawSemicirlce(radius, Math.PI * 1 / 2);
-    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), '#212121');
+    drawSemicirlce(radius, - angle, Math.PI, 0, 'rgba(255,255,50,1)');
+    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'rgba(50,50,50,1)', -angle);
   } else if (Math.sin(angle) < 0 && Math.cos(angle) < 0) {
     // 新月 -> 上弦
-    drawSemicirlce(radius, Math.PI * 3 / 2);
-    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), '#212121');
+    drawSemicirlce(radius, - angle, 0, Math.PI, 'rgba(255,255,50,1)');
+    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'rgba(50,50,50,1)', -angle);
   } else {
     // 上弦 -> 満月
-    drawSemicirlce(radius, Math.PI * 3 / 2);
-    drawEllipse(radius, radius * Math.cos(angle),);
+    drawSemicirlce(radius, - angle, 0, Math.PI, 'rgba(255,255,50,1)');
+    drawEllipse(radius, radius * Math.cos(angle), 'rgba(255,255,50,1)', -angle);
   }
 }
 // そのままの月
@@ -328,9 +349,9 @@ const drawCircle = (
 const drawSemicirlce = (
   radius: number,
   rotation: number,
-  fillColor: string = "rgba(255,255,255,1)",
   startAngle: number = 0,
-  endAngle: number = Math.PI * 1
+  endAngle: number = Math.PI * 1,
+  fillColor: string = "rgba(255,255,255,1)",
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
@@ -347,9 +368,10 @@ const drawSemicirlce = (
 };
 const drawEllipse = (
   radiusX: number, radiusY: number,
-  fillColor: string = "beige",
+  fillColor: string = "rgba(255,255,255,1)",
+  rotation: number = Math.PI / 2,
   startAngle: number = 0,
-  endAngle: number = Math.PI * 2
+  endAngle: number = Math.PI * 2,
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
@@ -359,7 +381,7 @@ const drawEllipse = (
     moonCoordinate.value.y,
     radiusX,
     radiusY,
-    Math.PI / 2,
+    rotation,
     // 0,
     startAngle,
     endAngle
