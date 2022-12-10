@@ -56,14 +56,15 @@ const drawEarthRotation = () => {
   if (ctx.value === null) return;
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
   drawBackGround(canvasScale.value); // 全体背景
-  drawEarth(Earth, props.dayCount, canvasScale.value / 2);
-  drawLineSunToEarth('rgba(255,0,0,0.8)', 2);
-  drawPlanetSurface(canvasScale.value / 2, 'rgba(255,255,255,0.8)');
-  drawPlaceLine(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,0.8)');
-  drawPlace(6, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,0.8)');
+  drawEarth(Earth, props.dayCount, canvasScale.value / 2, 'rgba(255,255,255,0.5)');
+  drawPlanetSurface(canvasScale.value / 2, 'rgba(255,255,255,1)');
+  drawLineSunToEarth('rgba(255,50,50,1)', 3, canvasScale.value * 19 / 20);
+  drawSun(Earth, props.dayCount, 3, 'rgba(255,50,50,1)');
+  drawPlaceLine(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,1)');
+  drawPlace(6, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,1)');
   drawPlace(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(0,0,0,1)');
-  drawMoonLine();
-  drawMoon();
+  drawMoonLine(canvasScale.value * 3 / 4, 3);
+  drawMoon(canvasScale.value * 3 / 4, 12);
 }
 
 /** 日数から年数への変換 */
@@ -87,10 +88,13 @@ const drawBackGround = (radius: number) => {
 }
 
 // 地球を描画
-const drawEarth = (earth: typeof Earth, days: number, radius: number) => {
+const drawEarth = (earth: typeof Earth, days: number, radius: number,
+  lightColor: string = "rgba(175,175,175,1)",
+  blackColor: string = "rgb(0,0,0,1)",
+) => {
   const angle = (-1) * earth.angle(dayToYear(days));
-  drawFilledCircle(radius, "rgb(0,0,0,1)", - (Math.PI) / 2, (Math.PI) / 2);
-  drawFilledCircle(radius, "rgba(175,175,175,1)", (Math.PI) / 2, - (Math.PI) / 2);
+  drawFilledCircle(radius, blackColor, - (Math.PI) / 2, (Math.PI) / 2);
+  drawFilledCircle(radius, lightColor, (Math.PI) / 2, - (Math.PI) / 2);
   if (ctx.value === null) return;
   ctx.value.beginPath();
   // 春分~秋分
@@ -105,7 +109,7 @@ const drawEarth = (earth: typeof Earth, days: number, radius: number) => {
       0,
       Math.PI
     );
-    ctx.value.fillStyle = 'rgba(175,175,175,1)';
+    ctx.value.fillStyle = lightColor;
   } else {
     ctx.value.ellipse(
       centerCoordinate().x,
@@ -117,7 +121,7 @@ const drawEarth = (earth: typeof Earth, days: number, radius: number) => {
       Math.PI,
       0
     );
-    ctx.value.fillStyle = 'rgba(0,0,0,1)';
+    ctx.value.fillStyle = blackColor;
   }
   ctx.value.fill();
   ctx.value.closePath();
@@ -172,7 +176,8 @@ const drawSun = (
   earth: typeof Earth,
   days: number = 0, // 基準日からの日数
   StarRadius: number = 3,
-  strokeColor: string = "rgba(255,255,255,0.9)",
+  strokeColor: string = "rgba(255,255,255,)",
+  lineWidth: number = 5,
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
@@ -189,6 +194,7 @@ const drawSun = (
     Math.PI * 2
   );
 
+  ctx.value.lineWidth = lineWidth;
   ctx.value.strokeStyle = strokeColor;
   ctx.value.stroke();
   ctx.value.closePath();
@@ -236,6 +242,7 @@ const drawLineSunToEarth = (
 
   lineColor: string = "rgba(255,255,255, 0.9)", // 線の色
   lineWidth: number = 2, // 線の幅
+  lineLength: number = canvasScale.value * 9 / 10,
 ) => {
   if (ctx.value === null) return;
   ctx.value.beginPath();
@@ -245,7 +252,7 @@ const drawLineSunToEarth = (
   ctx.value.arc(
     centerCoordinate().x,
     centerCoordinate().y,
-    canvasScale.value / 2,
+    lineLength,
     Math.PI,
     Math.PI,
   )
@@ -301,29 +308,33 @@ const drawMoonLine = (distance: number = canvasScale.value * 0.9, lineWidth: num
   ctx.value.lineWidth = 1; // reset
 }
 // 月の描画
-const drawMoon = (distance: number = canvasScale.value * 0.9) => {
+const drawMoon = (
+  distance: number = canvasScale.value * 0.9,
+  radius: number = canvasScale.value * 2 / 30,
+  moonColor: string = 'rgba(255,255,175,1)',
+  moonShadowColor: string = 'rgba(50,50,75,1)',
+) => {
   const moon = TheMoon;
   const year = dayToYear(props.dayCount);
-  const radius = canvasScale.value * 2 / 30;
   const angle = moon.relativeAngle(year)
   setMoonCoordinate(moon, props.dayCount, distance)
-  drawCircle(radius);
+  drawCircle(radius, moonShadowColor);
   if (Math.sin(angle) >= 0 && Math.cos(angle) >= 0) {
     // 満月 -> 下弦
-    drawSemicirlce(radius, - angle, Math.PI, 0, 'rgba(255,255,175,1)');
-    drawEllipse(radius, radius * Math.cos(angle), 'rgba(255,255,175,1)', -angle);
+    drawSemicirlce(radius, - angle, Math.PI, 0, moonColor);
+    drawEllipse(radius, radius * Math.cos(angle), moonColor, -angle);
   } else if (Math.sin(angle) >= 0 && Math.cos(angle) < 0) {
     // 下弦 -> 新月
-    drawSemicirlce(radius, - angle, Math.PI, 0, 'rgba(255,255,175,1)');
-    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'rgba(75,75,75,1)', -angle);
+    drawSemicirlce(radius, - angle, Math.PI, 0, moonColor);
+    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), moonShadowColor, -angle);
   } else if (Math.sin(angle) < 0 && Math.cos(angle) < 0) {
     // 新月 -> 上弦
-    drawSemicirlce(radius, - angle, 0, Math.PI, 'rgba(255,255,175,1)');
-    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), 'rgba(75,75,75,1)', -angle);
+    drawSemicirlce(radius, - angle, 0, Math.PI, moonColor);
+    drawEllipse(radius, radius * Math.abs(Math.cos(angle)), moonShadowColor, -angle);
   } else {
     // 上弦 -> 満月
-    drawSemicirlce(radius, - angle, 0, Math.PI, 'rgba(255,255,175,1)');
-    drawEllipse(radius, radius * Math.cos(angle), 'rgba(255,255,175,1)', -angle);
+    drawSemicirlce(radius, - angle, 0, Math.PI, moonColor);
+    drawEllipse(radius, radius * Math.cos(angle), moonColor, -angle);
   }
 }
 // そのままの月

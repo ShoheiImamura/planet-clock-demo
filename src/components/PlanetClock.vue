@@ -173,13 +173,13 @@ const earthRotationCanvasDiv = ref();
     </v-card>
     <v-card class="">
       <v-row no-gutters class="clock-area">
-        <v-col cols="6">
+        <!-- <v-col cols="12">
           <div class="fill-height align-center justify-center" ref="solarSystemCanvasDiv">
             <SolarSystemCanvas :day-count="dayCount()" :div-width="solarSystemCanvasDiv?.clientWidth"
               class="ma-2 pa-2" />
           </div>
-        </v-col>
-        <v-col cols="6">
+        </v-col> -->
+        <v-col cols="12">
           <div class="fill-height align-center justify-center" ref="earthRotationCanvasDiv">
             <EarthRotationCanvas :day-count="dayCount()" :day-unix-time-count="dayUnixTimeCount()"
               :div-width="earthRotationCanvasDiv?.clientWidth" class="ma-2 pa-2" />
