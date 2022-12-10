@@ -152,6 +152,7 @@ const model = ref(null)
 
 const solarSystemCanvasDiv = ref();
 const earthRotationCanvasDiv = ref();
+const ifShowPlanet = ref(false)
 </script>
 
 <template>
@@ -180,6 +181,11 @@ const earthRotationCanvasDiv = ref();
           </div>
         </v-col>
         <v-col cols="12">
+          <div class="fill-height align-center justify-center">
+            <v-btn icon @click="ifShowPlanet = !ifShowPlanet"><v-icon color="grey">mdi-compass</v-icon></v-btn>
+          </div>
+        </v-col>
+        <v-col cols="12" v-if="ifShowPlanet">
           <div class="fill-height align-center justify-center" ref="solarSystemCanvasDiv">
             <SolarSystemCanvas :day-count="dayCount()" :div-width="solarSystemCanvasDiv?.clientWidth"
               class="ma-2 pa-2" />
