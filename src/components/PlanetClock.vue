@@ -31,13 +31,18 @@ const countedDateTime = () => { return fromUnixTime(baseUnixTime + unixTimeCount
 const moonUnixTimeBase = ref({
   base: 0, // 基準値
   enough: 0, // あまり
+  baseMin: 0, // 表示上の最小値
+  baseMax: 0, // 表示上の最小値
 });
 const getMoonUnixTime = () => {
   moonUnixTimeBase.value.base = Math.floor(unixTimeCount.value / theMoonOrbitalPeriodUnixTime);
   moonUnixTimeBase.value.enough = unixTimeCount.value % theMoonOrbitalPeriodUnixTime;
+  moonUnixTimeBase.value.baseMin = moonUnixTimeBase.value.enough % (60 * 60 * 24);
+  moonUnixTimeBase.value.baseMax = moonUnixTimeBase.value.baseMin + (60 * 60 * 24) * 29;
 }
 const setMoonUnixTime = () => {
-  unixTimeCount.value = moonUnixTimeBase.value.base * theMoonOrbitalPeriodUnixTime + moonUnixTimeBase.value.enough
+  const unixTimeCountTotal = moonUnixTimeBase.value.base * theMoonOrbitalPeriodUnixTime + moonUnixTimeBase.value.enough
+  unixTimeCount.value = unixTimeCountTotal
 }
 
 // 早送り
@@ -175,18 +180,14 @@ const ifShowPlanet = ref(false)
     <v-card class="">
       <v-row no-gutters class="clock-area">
         <v-col cols="12">
-          <div class="fill-height align-center justify-center" ref="earthRotationCanvasDiv">
+          <div class="align-center justify-center" ref="earthRotationCanvasDiv">
             <EarthRotationCanvas :day-count="dayCount()" :day-unix-time-count="dayUnixTimeCount()"
               :div-width="earthRotationCanvasDiv?.clientWidth" class="ma-2 pa-2" />
-          </div>
-        </v-col>
-        <v-col cols="12">
-          <div class="fill-height align-center justify-center">
-            <v-btn icon @click="ifShowPlanet = !ifShowPlanet"><v-icon color="grey">mdi-compass</v-icon></v-btn>
+            <v-icon @click="ifShowPlanet = !ifShowPlanet" id="planet-toggle-icon" color="grey">mdi-compass</v-icon>
           </div>
         </v-col>
         <v-col cols="12" v-if="ifShowPlanet">
-          <div class="fill-height align-center justify-center" ref="solarSystemCanvasDiv">
+          <div class="align-center justify-center" ref="solarSystemCanvasDiv">
             <SolarSystemCanvas :day-count="dayCount()" :div-width="solarSystemCanvasDiv?.clientWidth"
               class="ma-2 pa-2" />
           </div>
@@ -203,8 +204,8 @@ const ifShowPlanet = ref(false)
         hide-details></v-slider>
       <v-slider v-model="manualDateTime.day" min="80" max="445" density="compact" label=" / year"
         hide-details></v-slider>
-      <v-slider v-model="moonUnixTimeBase.enough" min="1" max="2558605" density="compact" label=" / month"
-        hide-details></v-slider>
+      <v-slider v-model="moonUnixTimeBase.enough" :min="moonUnixTimeBase.baseMin" :max="moonUnixTimeBase.baseMax"
+        density="compact" :step="(60 * 60 * 24)" label=" / month" hide-details></v-slider>
       <v-slider v-model="manualDateTime.minute" min="0" max="1440" density="compact" label=" / day"
         hide-details></v-slider>
     </v-card>
@@ -231,5 +232,12 @@ const ifShowPlanet = ref(false)
 <style scoped>
 .clock-area {
   background-color: #111111;
+}
+
+#planet-toggle-icon {
+  position: relative;
+  bottom: 30px;
+  left: 30px;
+  z-index: 10;
 }
 </style>

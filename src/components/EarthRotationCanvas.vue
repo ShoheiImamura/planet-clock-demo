@@ -58,16 +58,21 @@ const canvasRotate = ref(Math.PI * 2 / 2);
 const drawEarthRotation = () => {
   if (ctx.value === null) return;
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
-  drawBackGround(canvasScale.value); // 全体背景
-  drawEarth(Earth, props.dayCount, canvasScale.value / 2, 'rgba(255,255,255,0.5)', 'rgba(0,0,0,1)', canvasRotate.value);
-  drawPlanetSurface(canvasScale.value / 2, 'rgba(255,255,255,1)');
-  // drawLineSunToEarth('rgba(255,50,50,1)', 3, canvasScale.value * 19 / 20);
+  // 全体背景
+  drawBackGround(canvasScale.value);
+  // 太陽
   drawSun(Earth, props.dayCount, 3, 'rgba(255,50,50,1)', 4, canvasRotate.value);
+  // 月
+  drawMoonLine(canvasScale.value * 3 / 4, 1, 'rgba(255,255,100,1)', canvasRotate.value);
+  drawMoon(canvasScale.value * 3 / 4, 10, 'rgba(255,255,100,1)', 'rgba(75,75,75,1)', canvasRotate.value);
+  // 地球
+  drawEarth(Earth, props.dayCount, canvasScale.value / 2, 'rgba(125,125,125,1)', 'rgba(0,0,0,1)', canvasRotate.value);
+  drawPlanetSurface(canvasScale.value / 2, 'rgba(255,255,255,1)');
+  // 現在地
   drawPlaceLine(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,1)', 5, canvasRotate.value);
   drawPlace(6, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,1)', canvasRotate.value);
   drawPlace(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(0,0,0,1)', canvasRotate.value);
-  drawMoonLine(canvasScale.value * 3 / 4, 2, 'rgba(255,255,255,1)', canvasRotate.value);
-  drawMoon(canvasScale.value * 3 / 4, 10, 'rgba(255,255,255,1)', 'rgba(25,25,25,1)', canvasRotate.value);
+  // 秒針
   drawSecondHand(props.dayUnixTimeCount);
 }
 
@@ -439,7 +444,7 @@ const drawSecondHand = (
 }
 // 
 const secondToAngle = (second: number): number => {
-  return - second * Math.PI * 2 / 60;
+  return - second * Math.PI * 2 / 60 + canvasRotate.value;
 }
 </script>
 
