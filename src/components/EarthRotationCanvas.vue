@@ -58,13 +58,14 @@ const drawEarthRotation = () => {
   drawBackGround(canvasScale.value); // 全体背景
   drawEarth(Earth, props.dayCount, canvasScale.value / 2, 'rgba(255,255,255,0.5)');
   drawPlanetSurface(canvasScale.value / 2, 'rgba(255,255,255,1)');
-  drawLineSunToEarth('rgba(255,50,50,1)', 3, canvasScale.value * 19 / 20);
+  // drawLineSunToEarth('rgba(255,50,50,1)', 3, canvasScale.value * 19 / 20);
   drawSun(Earth, props.dayCount, 3, 'rgba(255,50,50,1)');
-  drawPlaceLine(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,1)');
+  drawPlaceLine(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,1)', 5);
   drawPlace(6, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,1)');
   drawPlace(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(0,0,0,1)');
-  drawMoonLine(canvasScale.value * 3 / 4, 3);
-  drawMoon(canvasScale.value * 3 / 4, 12);
+  drawMoonLine(canvasScale.value * 3 / 4, 2);
+  drawMoon(canvasScale.value * 3 / 4, 10);
+  drawSecondHand(props.dayUnixTimeCount);
 }
 
 /** 日数から年数への変換 */
@@ -311,8 +312,8 @@ const drawMoonLine = (distance: number = canvasScale.value * 0.9, lineWidth: num
 const drawMoon = (
   distance: number = canvasScale.value * 0.9,
   radius: number = canvasScale.value * 2 / 30,
-  moonColor: string = 'rgba(255,255,175,1)',
-  moonShadowColor: string = 'rgba(50,50,75,1)',
+  moonColor: string = 'rgba(255,255,200,1)',
+  moonShadowColor: string = 'rgba(40,40,40,1)',
 ) => {
   const moon = TheMoon;
   const year = dayToYear(props.dayCount);
@@ -399,6 +400,33 @@ const drawEllipse = (
   );
   ctx.value.fillStyle = fillColor;
   ctx.value.fill();
+}
+// 秒針
+const drawSecondHand = (
+  second: number,
+  lineColor: string = "rgba(255,255,255, 0.9)", // 線の色
+  lineWidth: number = 2, // 線の幅
+  lineLength: number = canvasScale.value * 9 / 10,
+) => {
+  if (ctx.value === null) return;
+  ctx.value.beginPath();
+  ctx.value.lineWidth = lineWidth;
+  ctx.value.strokeStyle = lineColor;
+  ctx.value.moveTo(centerCoordinate().x, centerCoordinate().y);
+  ctx.value.arc(
+    centerCoordinate().x,
+    centerCoordinate().y,
+    lineLength,
+    secondToAngle(second),
+    secondToAngle(second),
+  )
+  ctx.value.stroke();
+  ctx.value.closePath();
+  ctx.value.lineWidth = 1; // reset
+}
+// 
+const secondToAngle = (second: number): number => {
+  return - second * Math.PI * 2 / 60;
 }
 </script>
 
