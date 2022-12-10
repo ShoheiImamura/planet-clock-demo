@@ -47,7 +47,7 @@ const setMoonUnixTime = () => {
 
 // 早送り
 const beatSpeed = ref(60); // 1秒間の count 回数
-const timePerCount = ref(1); // 1カウントごとに進めるunixtime
+const timePerCount = ref(60); // 1カウントごとに進めるunixtime
 const incrementTime = () => {
   if (mode.value === 'auto_increment') {
     unixTimeCount.value += Number(timePerCount.value);
@@ -206,7 +206,7 @@ const ifShowPlanet = ref(false)
         hide-details></v-slider>
       <v-slider v-model="moonUnixTimeBase.enough" :min="moonUnixTimeBase.baseMin" :max="moonUnixTimeBase.baseMax"
         density="compact" :step="(60 * 60 * 24)" label=" / month" hide-details></v-slider>
-      <v-slider v-model="manualDateTime.minute" min="0" max="1440" density="compact" label=" / day"
+      <v-slider v-model="manualDateTime.minute" min="0" max="1439" density="compact" label=" / day"
         hide-details></v-slider>
     </v-card>
     <!-- 早送り時 -->
@@ -215,13 +215,13 @@ const ifShowPlanet = ref(false)
         <v-btn :value="0">
           <v-icon>mdi-stop</v-icon>
         </v-btn>
-        <v-btn :value="1">
+        <v-btn :value="1 / 60">
           <v-icon>mdi-play</v-icon>
         </v-btn>
         <v-btn :value="60">
           <v-icon>mdi-fast-forward</v-icon>
         </v-btn>
-        <v-btn :value="(60 * 60)">
+        <v-btn :value="(60 * 60 * 24)">
           <v-icon>mdi-skip-forward</v-icon>
         </v-btn>
       </v-btn-toggle>
