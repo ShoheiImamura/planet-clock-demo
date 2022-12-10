@@ -192,8 +192,8 @@ const ifShowPlanet = ref(false)
           </div>
         </v-col>
         <v-col cols="12">
-          <h2 class="text-center">{{ displayCountedDate() }}</h2>
-          <h3 class="text-center">{{ displayCountedTime() }}</h3>
+          <h3 class="text-center">{{ displayCountedDate() }}</h3>
+          <h1 class="text-center">{{ displayCountedTime() }}</h1>
         </v-col>
       </v-row>
     </v-card>
