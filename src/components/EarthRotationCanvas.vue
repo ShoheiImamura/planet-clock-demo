@@ -2,7 +2,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch, toRefs } from "vue";
 import { planet } from "./Planet.vue";
-import { Planet, Moon, } from "./Planet.vue";
+import { Moon, } from "./Planet.vue";
 
 const props = defineProps({
   dayCount: {
@@ -67,12 +67,13 @@ const drawEarthRotation = () => {
   drawMoonLine(canvasScale.value * 3 / 4, 1, 'rgba(255,255,100,1)', canvasRotate.value);
   drawMoon(canvasScale.value * 3 / 4, 10, 'rgba(255,255,100,1)', 'rgba(75,75,75,1)', canvasRotate.value);
   // 地球
+  // drawEarthImage();
   drawEarth(Earth, props.dayCount, canvasScale.value / 2, 'rgba(125,125,125,1)', 'rgba(0,0,0,1)', canvasRotate.value);
   drawPlanetSurface(canvasScale.value / 2, 'rgba(255,255,255,1)');
   // 現在地
-  drawPlaceLine(props.dayUnixTimeCount, 'rgba(255,255,255,1)', 5, canvasRotate.value);
-  drawPlace(6, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(255,255,255,1)', canvasRotate.value);
-  drawPlace(3, Earth, props.dayCount, props.dayUnixTimeCount, 'rgba(0,0,0,1)', canvasRotate.value);
+  drawPlaceLine(props.dayUnixTimeCount, 'rgba(255,255,255,1)', 4, canvasRotate.value);
+  drawPlace(4, props.dayUnixTimeCount, 'rgba(0,0,0,1)', canvasRotate.value, 35);
+  drawPlace(2, props.dayUnixTimeCount, 'rgba(255,255,255,1)', canvasRotate.value, 35);
   // 秒針
   drawSecondHand(props.dayUnixTimeCount);
 }
@@ -181,36 +182,52 @@ const drawEarth = (earth: typeof Earth, days: number, radius: number,
   ctx.value.closePath();
 };
 
-// 地点を描画
-const drawPlace = (radius: number, earth: typeof Earth, days: number, time: number,
-  fillColor: string = 'rgba(255,0,0,1)', canvasRotate: number = 0) => {
+// 地球の画像を読み込み
+const drawEarthImage = () => {
   if (ctx.value === null) return;
-  ctx.value.beginPath();
-  // 位置を導出
-  const earthAngle = (-1) * earth.angle(dayToYear(days)) // 地球の角度
+  const image = new Image();
+  image.src = '/north_point_map.png';
+  ctx.value.drawImage(image, 7, 7, 225, 225, 76, 76, 150, 150);
+}
+
+// 地点を描画
+const drawPlace = (radius: number, time: number, fillColor: string = 'rgba(255,0,0,1)', canvasRotate: number = 0, latitude: number = 35) => {
+  if (ctx.value === null) return;
   const placeAngle = Math.PI * 2 * (time / (60 * 60 * 24)) + canvasRotate;// 場所の相対角度
-  const { x, y } = getXYByRadians(
-    placeAngle, // 右位置に調整
-    canvasScale.value / 2 * Math.cos(Math.PI * 35 / 180), // 緯度調整
-  );
-  ctx.value.arc(
-    centerCoordinate().x + x,
-    centerCoordinate().y + y,
-    radius,
-    0,
-    Math.PI * 2
-  );
+  const { x, y } = getXYByRadians(placeAngle, canvasScale.value / 2 * Math.cos(Math.PI * latitude / 180)); // 緯度調整
   ctx.value.fillStyle = fillColor;
+  ctx.value.beginPath();
+  ctx.value.arc(centerCoordinate().x + x, centerCoordinate().y + y, radius, 0, Math.PI * 2);
   ctx.value.fill();
   ctx.value.closePath();
 };
 
-
-// 地点までの線
-const drawPlaceLine = (time: number, lineColor: string = 'rgba(255,0,0,1)', lineWidth: number = 3, canvasRotate: number = 0) => {
+// 地点にピンを立てる
+const drawPlacePin = (time: number, fillColor: string = 'rgba(255,0,0,1)', canvasRotate: number = 0, latitude: number = 35
+) => {
   if (ctx.value === null) return;
   const placeAngle = Math.PI * 2 * (time / (60 * 60 * 24)) + canvasRotate;// 場所の相対角度
-  const { x, y } = getXYByRadians(placeAngle, canvasScale.value / 2); // 右の位置に調整
+  const { x, y } = getXYByRadians(placeAngle, canvasScale.value / 2 * Math.cos(Math.PI * latitude / 180)); // 緯度調整
+  const baseX = centerCoordinate().x + x, baseY = centerCoordinate().y + y;
+  ctx.value.strokeStyle = fillColor;
+  ctx.value.fillStyle = 'red';
+  ctx.value.lineWidth = 2
+  ctx.value.beginPath();
+  let region = new Path2D();
+  region.arc(baseX, baseY - 20, 4, 0, Math.PI * 2);
+  region.moveTo(baseX, baseY);
+  region.arc(baseX, baseY - 20, 10, Math.PI * 5 / 6, Math.PI * 1 / 6);
+  region.lineTo(baseX, baseY);
+  region.closePath();
+  ctx.value.fill(region, "evenodd");
+
+};
+
+// 地点までの線
+const drawPlaceLine = (time: number, lineColor: string = 'rgba(255,0,0,1)', lineWidth: number = 3, canvasRotate: number = 0, latitude: number = 35) => {
+  if (ctx.value === null) return;
+  const placeAngle = Math.PI * 2 * (time / (60 * 60 * 24)) + canvasRotate;// 場所の相対角度
+  const { x, y } = getXYByRadians(placeAngle, canvasScale.value / 2 * Math.cos(Math.PI * latitude / 180)); // 右の位置に調整
   ctx.value.strokeStyle = lineColor;
   ctx.value.lineWidth = lineWidth;
   ctx.value.lineCap = 'round';
