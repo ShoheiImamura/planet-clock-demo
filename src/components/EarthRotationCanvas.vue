@@ -60,9 +60,9 @@ const drawEarthRotation = () => {
   ctx.value.clearRect(0, 0, canvasScale.value * 2, canvasScale.value * 2);
   // 全体背景
   drawBackGround(canvasScale.value);
-  drawScale();
+  // drawScale();
   // 太陽
-  drawSun(5, 'rgba(255,50,50,1)', canvasRotate.value);
+  // drawSun(5, 'rgba(255,50,50,1)', canvasRotate.value);
   // 月
   drawMoonLine(canvasScale.value * 3 / 4, 1, 'rgba(255,255,100,1)', canvasRotate.value);
   drawMoon(canvasScale.value * 3 / 4, 10, 'rgba(255,255,100,1)', 'rgba(75,75,75,1)', canvasRotate.value);
@@ -76,6 +76,8 @@ const drawEarthRotation = () => {
   drawPlace(2, props.dayUnixTimeCount, 'rgba(255,255,255,1)', canvasRotate.value, 35);
   // 秒針
   drawSecondHand(props.dayUnixTimeCount);
+  // 数字
+  drawNumber();
 }
 
 /** 日数から年数への変換 */
@@ -87,10 +89,7 @@ const dayToYear = (day: number): number => {
 const getXYByRadians = (radians: number, radius: number): Coordinate => {
   const x = Math.cos(radians) * radius;
   const y = -Math.sin(radians) * radius;
-  return {
-    x: x,
-    y: y,
-  };
+  return { x: x, y: y, };
 };
 
 // 背景
@@ -446,6 +445,30 @@ const drawSecondHand = (
 // 
 const secondToAngle = (second: number): number => {
   return - second * Math.PI * 2 / 60 + canvasRotate.value;
+}
+
+// 文字盤数字
+const drawNumber = () => {
+  if (ctx.value === null) return;
+  ctx.value.font = '12px San';
+  ctx.value.textAlign = 'center';
+  ctx.value.textBaseline = 'middle';
+  for (let index = 0; index < 24; index++) {
+    if (index % 3 == 0) {
+      if (index == 12) {
+        ctx.value.fillStyle = 'red';
+        ctx.value.font = 'bold 15px San';
+      } else if (index == 0) {
+        ctx.value.fillStyle = 'white';
+        ctx.value.font = 'bold 15px San';
+      } else {
+        ctx.value.fillStyle = 'white';
+        ctx.value.font = '13px San';
+      }
+      const { x, y } = getXYByRadians(Math.PI * (index + 12) / 12, canvasScale.value * 9 / 10)
+      ctx.value.fillText(String(index), centerCoordinate().x + x, centerCoordinate().y + y,)
+    }
+  }
 }
 </script>
 
