@@ -63,10 +63,7 @@ const dayToYear = (day: number): number => {
 const getXYByRadians = (radians: number, radius: number): Coordinate => {
   const x = Math.cos(radians) * radius;
   const y = -Math.sin(radians) * radius;
-  return {
-    x: x,
-    y: y,
-  };
+  return { x, y };
 };
 
 // 惑星会合

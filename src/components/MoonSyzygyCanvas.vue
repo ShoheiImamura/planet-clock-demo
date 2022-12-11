@@ -1,16 +1,13 @@
 
 <script lang="ts" setup>
 
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { planet } from "./Planet.vue";
 const { TheMoon } = planet();
 
 
 const props = defineProps({
-  dayCount: {
-    type: Number,
-    default: 0,
-  }
+  dayCount: { type: Number, default: 0, }
 });
 
 type Coordinate = {
